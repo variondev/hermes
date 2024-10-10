@@ -1,3 +1,8 @@
 package dev.varion.hermes;
 
-public class HermesTests {}
+public final class HermesTests {
+
+  public static void main(final String[] args) {
+    Hermes.newBuilder().withMessageBroker(N).build();
+  }
+}

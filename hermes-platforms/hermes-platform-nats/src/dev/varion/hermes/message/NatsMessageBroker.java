@@ -5,10 +5,12 @@ import static java.util.logging.Logger.getLogger;
 
 import io.nats.client.Connection;
 import io.nats.client.Message;
+import io.nats.client.Nats;
+import io.nats.client.Options;
 import java.util.concurrent.CompletableFuture;
 import java.util.logging.Logger;
 
-final class NatsMessageBroker implements MessageBroker {
+public final class NatsMessageBroker implements MessageBroker {
 
   private static final Logger LOGGER = getLogger(NatsMessageBroker.class.getName());
 
@@ -16,6 +18,20 @@ final class NatsMessageBroker implements MessageBroker {
 
   NatsMessageBroker(final Connection connection) {
     this.connection = connection;
+  }
+
+  public static MessageBroker create(final Connection connection) {
+    return new NatsMessageBroker(connection);
+  }
+
+  public static MessageBroker create(final Options options) throws MessageBrokerException {
+    try {
+      return new NatsMessageBroker(Nats.connect(options));
+    } catch (final Exception exception) {
+      throw new MessageBrokerException(
+          "Could not initiate a nats connection required for a message broker, because of unexpected exception.",
+          exception);
+    }
   }
 
   @Override
