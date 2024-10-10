@@ -3,6 +3,7 @@ package dev.varion.hermes.packet;
 import static java.util.logging.Level.FINEST;
 
 import dev.shiza.dew.event.EventBus;
+import dev.shiza.dew.subscription.Subscribe;
 import dev.shiza.dew.subscription.Subscriber;
 import dev.shiza.dew.subscription.SubscribingException;
 import dev.varion.hermes.logger.LoggerFacade;
@@ -33,13 +34,13 @@ final class PacketSubscriberImpl implements PacketSubscriber {
         Packet.class,
         packet -> {
           final String replyChannelName = packet.getReplyChannelName();
-          packetPublisher.publish(replyChannelName, packet);
           loggerFacade.log(
               FINEST,
-              "Received request with %s reply channel and responded with %s packet. Preview: %s",
+              "Received request with %s reply channel and responded with %s packet",
               replyChannelName,
-              packet.getClass().getName(),
-              packet);
+              packet.getClass().getName());
+
+          packetPublisher.publish(replyChannelName, packet);
         });
   }
 
@@ -52,6 +53,10 @@ final class PacketSubscriberImpl implements PacketSubscriber {
 
     eventBus.subscribe(subscriber);
     for (final Method method : subscriber.getClass().getDeclaredMethods()) {
+      if (!method.isAnnotationPresent(Subscribe.class)) {
+        continue;
+      }
+
       if (method.getParameterCount() == 0) {
         throw new SubscribingException(
             "Subscriber's method %s parameter count is zero".formatted(method.getName()));
@@ -71,12 +76,11 @@ final class PacketSubscriberImpl implements PacketSubscriber {
             final Packet packet = processIncomingPacket(payload);
             loggerFacade.log(
                 FINEST,
-                "Received packet of type %s (%s) from %s channel with %s reply channel. Preview: %s",
+                "Received packet of type %s (%s) from %s channel with %s reply channel",
                 packet.getClass().getName(),
                 packet.getUniqueId(),
                 identity,
-                replyChannelName,
-                packet);
+                replyChannelName);
 
             final boolean whetherListensForPacket = packetType.equals(packet.getClass());
             if (whetherListensForPacket) {
@@ -84,13 +88,12 @@ final class PacketSubscriberImpl implements PacketSubscriber {
               eventBus.publish(packet, identity);
               loggerFacade.log(
                   FINEST,
-                  "Received packet of type %s (%s) from %s channel with %s reply channel and forwarded to %s listener. Preview: %s",
+                  "Received packet of type %s (%s) from %s channel with %s reply channel and forwarded to %s listener",
                   packet.getClass().getName(),
                   packet.getUniqueId(),
                   identity,
                   replyChannelName,
-                  subscriber.getClass().getName(),
-                  packet);
+                  subscriber.getClass().getName());
             }
           });
     }

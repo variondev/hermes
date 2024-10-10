@@ -1,9 +1,10 @@
 package dev.varion.hermes;
 
-import static dev.varion.hermes.logger.LoggerFacade.getNoopLogger;
+import static dev.varion.hermes.logger.LoggerFacade.getLoggerFacade;
 
 import dev.shiza.dew.event.EventBus;
 import dev.shiza.dew.subscription.Subscriber;
+import dev.shiza.dew.subscription.SubscriptionFacade;
 import dev.varion.hermes.logger.LoggerFacade;
 import dev.varion.hermes.message.MessageBroker;
 import dev.varion.hermes.packet.Packet;
@@ -30,10 +31,12 @@ public interface Hermes {
 
   final class HermesBuilder {
 
-    private LoggerFacade loggerFacade = getNoopLogger();
+    private LoggerFacade loggerFacade = getLoggerFacade(false);
     private MessageBroker messageBroker;
     private PacketSerdes packetSerdes;
-    private EventBus eventBus = EventBus.create();
+    private EventBus eventBus =
+        EventBus.create(SubscriptionFacade.create(), HermesResultHandlerService.create())
+            .publisher(Runnable::run);
 
     HermesBuilder() {}
 

@@ -3,12 +3,10 @@ package dev.varion.hermes.packet;
 import static java.util.UUID.randomUUID;
 
 import dev.shiza.dew.event.Event;
-import java.io.Serializable;
-import java.lang.reflect.Field;
 import java.util.Objects;
 import java.util.UUID;
 
-public abstract class Packet implements Serializable, Event {
+public abstract class Packet implements Event {
 
   private UUID uniqueId;
   private String replyChannelName;
@@ -54,20 +52,5 @@ public abstract class Packet implements Serializable, Event {
   @Override
   public int hashCode() {
     return Objects.hash(uniqueId);
-  }
-
-  @Override
-  public String toString() {
-    try {
-      final StringBuilder builder = new StringBuilder();
-      builder.append("Packet{");
-      for (final Field field : getClass().getDeclaredFields()) {
-        builder.append(field.getName()).append("=").append(field.get(this));
-      }
-      builder.append('}');
-      return builder.toString();
-    } catch (final IllegalAccessException exception) {
-      return super.toString();
-    }
   }
 }

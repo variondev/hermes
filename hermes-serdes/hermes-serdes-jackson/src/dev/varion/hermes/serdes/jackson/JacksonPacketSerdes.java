@@ -47,7 +47,7 @@ public final class JacksonPacketSerdes implements PacketSerdes {
   @Override
   public Packet deserialize(final byte[] data) throws PacketSerdesException {
     try {
-      return mapper.readValue(data, Packet.class);
+      return mapper.readValue(data, JacksonPacket.class);
     } catch (final IOException exception) {
       throw new PacketSerdesException("Could not deserialize packet", exception);
     }

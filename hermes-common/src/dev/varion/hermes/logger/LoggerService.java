@@ -1,7 +1,6 @@
 package dev.varion.hermes.logger;
 
 import static java.util.logging.Level.ALL;
-import static java.util.logging.Level.FINER;
 import static java.util.logging.Logger.getLogger;
 
 import java.util.logging.ConsoleHandler;
@@ -9,24 +8,23 @@ import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-final class HermesLogger implements LoggerFacade {
+final class LoggerService implements LoggerFacade {
 
-  private static final int FINER_LEVEL_VALUE = FINER.intValue();
   private final boolean debug;
   private final Logger logger;
 
-  HermesLogger(final boolean debug) {
+  LoggerService(final boolean debug) {
     this.debug = debug;
     logger = getConfiguredLogger();
   }
 
   @Override
   public void log(final Level level, final String message, final Object... parameters) {
-    if (!debug && level.intValue() <= FINER_LEVEL_VALUE) {
+    if (!debug) {
       return;
     }
 
-    logger.log(level, message, parameters);
+    logger.log(level, message.formatted(parameters));
   }
 
   private Logger getConfiguredLogger() {

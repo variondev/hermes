@@ -5,7 +5,7 @@ plugins {
 }
 
 dependencies {
-    implementation("dev.shiza:dew:1.1.0")
+    api("dev.shiza:dew:1.1.0")
 }
 
 hermesPublish {

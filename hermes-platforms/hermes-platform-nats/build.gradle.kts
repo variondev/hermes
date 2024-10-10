@@ -5,8 +5,8 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":hermes-common"))
-    implementation("io.nats:jnats:2.20.2")
+    api(project(":hermes-common"))
+    api("io.nats:jnats:2.20.2")
 }
 
 hermesPublish {

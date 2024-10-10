@@ -26,7 +26,7 @@ public final class NatsMessageBroker implements MessageBroker {
 
   public static MessageBroker create(final Options options) throws MessageBrokerException {
     try {
-      return new NatsMessageBroker(Nats.connect(options));
+      return create(Nats.connect(options));
     } catch (final Exception exception) {
       throw new MessageBrokerException(
           "Could not initiate a nats connection required for a message broker, because of unexpected exception.",

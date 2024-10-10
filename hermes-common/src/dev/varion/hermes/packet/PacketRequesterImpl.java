@@ -31,22 +31,20 @@ final class PacketRequesterImpl implements PacketRequester {
       final String channelName, final T packet) {
     loggerFacade.log(
         FINEST,
-        "Requesting packet of type %s (%s) over the channel %s. Preview: %s",
+        "Requesting packet of type %s (%s) over the channel %s",
         packet.getClass().getSimpleName(),
         packet.getUniqueId(),
-        channelName,
-        packet);
+        channelName);
 
     try {
       final byte[] payload = packetSerdes.serialize(packet);
       loggerFacade.log(
           FINEST,
-          "Request of packet of type %s (%s) has been completed over the %s channel with payload of %d bytes. Preview: %s",
+          "Request of packet of type %s (%s) has been completed over the %s channel with payload of %d bytes",
           packet.getClass().getSimpleName(),
           packet.getUniqueId(),
           channelName,
-          payload.length,
-          packet);
+          payload.length);
       return messageBroker
           .request(channelName, payload)
           .<R>thenCompose(this::processIncomingPacket)
@@ -54,12 +52,11 @@ final class PacketRequesterImpl implements PacketRequester {
               cause -> {
                 loggerFacade.log(
                     WARNING,
-                    "Request of packet of type %s (%s) failed over the channel %s. Error: %s. Preview: %s",
+                    "Request of packet of type %s (%s) failed over the channel %s. Error: %s",
                     packet.getClass().getSimpleName(),
                     packet.getUniqueId(),
                     channelName,
-                    cause.getMessage(),
-                    packet);
+                    cause.getMessage());
                 return null;
               });
     } catch (final Exception exception) {
@@ -79,23 +76,21 @@ final class PacketRequesterImpl implements PacketRequester {
                 final T receivedPacket = (T) packetSerdes.deserialize(message);
                 loggerFacade.log(
                     FINEST,
-                    "Request of packet of type %s (%s) has been fulfilled over the temporary channel with payload of %d bytes. Preview: %s",
+                    "Request of packet of type %s (%s) has been fulfilled over the temporary channel with payload of %d bytes.",
                     receivedPacket.getClass().getSimpleName(),
                     receivedPacket.getUniqueId(),
-                    message.length,
-                    receivedPacket);
+                    message.length);
                 return receivedPacket;
               } catch (final Exception exception) {
                 throw new MessageProcessingException(
-                    "Could not process incoming request packet, because of unexpected exception.",
+                    "Could not process incoming request packet, because of unexpected exception. (%s)"
+                        .formatted(exception.getMessage()),
                     exception);
               }
             })
         .exceptionally(
             exception -> {
-              throw new MessageProcessingException(
-                  "Could not complete processing of incoming request packet, because of unexpected exception.",
-                  exception);
+              throw new MessageProcessingException(exception);
             });
   }
 }
