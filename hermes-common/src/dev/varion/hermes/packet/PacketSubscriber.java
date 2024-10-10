@@ -21,5 +21,5 @@ public interface PacketSubscriber {
 
   void subscribe(Subscriber subscriber);
 
-  <T extends Packet> T deserializePacket(byte[] payload) throws MessageProcessingException;
+  <T extends Packet> T processIncomingPacket(byte[] payload) throws MessageProcessingException;
 }

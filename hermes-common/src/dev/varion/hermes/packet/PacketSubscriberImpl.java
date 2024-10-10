@@ -68,7 +68,7 @@ final class PacketSubscriberImpl implements PacketSubscriber {
       messageBroker.subscribe(
           identity,
           (ignored, replyChannelName, payload) -> {
-            final Packet packet = deserializePacket(payload);
+            final Packet packet = processIncomingPacket(payload);
             loggerFacade.log(
                 FINEST,
                 "Received packet of type %s (%s) from %s channel with %s reply channel. Preview: %s",
@@ -97,7 +97,7 @@ final class PacketSubscriberImpl implements PacketSubscriber {
   }
 
   @Override
-  public <T extends Packet> T deserializePacket(final byte[] payload)
+  public <T extends Packet> T processIncomingPacket(final byte[] payload)
       throws MessageProcessingException {
     try {
       //noinspection unchecked
