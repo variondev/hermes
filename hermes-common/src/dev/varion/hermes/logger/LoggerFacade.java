@@ -5,7 +5,7 @@ import java.util.logging.Level;
 @FunctionalInterface
 public interface LoggerFacade {
 
-  static LoggerFacade getLoggerFacade(final boolean debug) {
+  static LoggerFacade create(final boolean debug) {
     return new LoggerService(debug);
   }
 

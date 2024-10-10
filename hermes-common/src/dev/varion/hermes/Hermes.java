@@ -1,6 +1,6 @@
 package dev.varion.hermes;
 
-import static dev.varion.hermes.logger.LoggerFacade.getLoggerFacade;
+import static dev.varion.hermes.logger.LoggerFacade.create;
 
 import dev.shiza.dew.event.EventBus;
 import dev.shiza.dew.subscription.Subscriber;
@@ -31,7 +31,7 @@ public interface Hermes {
 
   final class HermesBuilder {
 
-    private LoggerFacade loggerFacade = getLoggerFacade(false);
+    private LoggerFacade loggerFacade = create(false);
     private MessageBroker messageBroker;
     private PacketSerdes packetSerdes;
     private EventBus eventBus =

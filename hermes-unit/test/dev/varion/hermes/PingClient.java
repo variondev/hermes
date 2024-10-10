@@ -1,7 +1,6 @@
 package dev.varion.hermes;
 
-import static dev.varion.hermes.logger.LoggerFacade.getLoggerFacade;
-
+import dev.varion.hermes.logger.LoggerFacade;
 import dev.varion.hermes.message.NatsMessageBroker;
 import dev.varion.hermes.serdes.jackson.JacksonPacketSerdes;
 import io.nats.client.Nats;
@@ -16,15 +15,15 @@ public final class PingClient {
         Hermes.newBuilder()
             .withMessageBroker(NatsMessageBroker.create(Nats.connect()))
             .withPacketSerdes(JacksonPacketSerdes.create())
-            .withLoggerFacade(getLoggerFacade(true))
+            .withLoggerFacade(LoggerFacade.create(true))
             .build();
 
     hermes
         .<PingPacket, PongPacket>request("tests", new PingPacket("Ping!"))
         .thenAccept(
             packet ->
-                System.out.println(
-                    "Received: " + packet.getUniqueId() + " - " + packet.getMessage()))
+                System.out.printf(
+                    "Received: %s -> %s%n", packet.getUniqueId(), packet.getMessage()))
         .join();
   }
 }
