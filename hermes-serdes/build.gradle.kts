@@ -1,0 +1,3 @@
+plugins {
+    `hermes-java-parent`
+}
