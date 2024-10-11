@@ -7,7 +7,6 @@ import dev.varion.hermes.packet.Packet;
 import dev.varion.hermes.packet.PacketPublisher;
 import dev.varion.hermes.packet.PacketRequester;
 import dev.varion.hermes.packet.PacketSubscriber;
-import dev.varion.hermes.packet.callback.PacketCallback;
 import dev.varion.hermes.packet.callback.PacketCallbackFacade;
 import dev.varion.hermes.packet.serdes.PacketSerdes;
 import java.io.IOException;
@@ -24,8 +23,7 @@ public interface Hermes {
 
   void subscribe(Subscriber subscriber);
 
-  <T extends Packet & PacketCallback> CompletableFuture<T> request(
-      String channelName, Packet request);
+  <T extends Packet> CompletableFuture<T> request(String channelName, Packet request);
 
   void close() throws IOException;
 

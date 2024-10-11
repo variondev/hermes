@@ -1,7 +1,6 @@
 package dev.varion.hermes.packet;
 
 import dev.varion.hermes.message.MessageBroker;
-import dev.varion.hermes.packet.callback.PacketCallback;
 import dev.varion.hermes.packet.callback.PacketCallbackFacade;
 import dev.varion.hermes.packet.serdes.PacketSerdes;
 import java.time.Duration;
@@ -18,6 +17,5 @@ public interface PacketRequester {
         messageBroker, packetSerdes, packetCallbackFacade, requestCleanupInterval);
   }
 
-  <T extends Packet & PacketCallback> CompletableFuture<T> request(
-      String channelName, Packet request);
+  <T extends Packet> CompletableFuture<T> request(String channelName, Packet request);
 }

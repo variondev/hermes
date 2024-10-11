@@ -4,7 +4,6 @@ import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
 import dev.shiza.dew.event.EventPublishingException;
 import dev.varion.hermes.message.MessageBroker;
-import dev.varion.hermes.packet.callback.PacketCallback;
 import dev.varion.hermes.packet.callback.PacketCallbackFacade;
 import dev.varion.hermes.packet.serdes.PacketSerdes;
 import java.time.Duration;
@@ -30,7 +29,7 @@ final class PacketRequesterImpl implements PacketRequester {
   }
 
   @Override
-  public <T extends Packet & PacketCallback> CompletableFuture<T> request(
+  public <T extends Packet> CompletableFuture<T> request(
       final String channelName, final Packet packet) {
     final UUID uniqueId = packet.getUniqueId();
     try {

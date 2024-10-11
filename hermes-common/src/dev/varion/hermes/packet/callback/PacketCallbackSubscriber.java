@@ -31,11 +31,9 @@ public final class PacketCallbackSubscriber implements HermesListener {
         .findByUniqueId(uniqueId)
         .ifPresent(
             future -> {
-              if (packet instanceof final PacketCallback response) {
-                //noinspection unchecked
-                ((CompletableFuture<PacketCallback>) future).complete(response);
-                packetCallbackFacade.remove(uniqueId);
-              }
+              //noinspection unchecked
+              ((CompletableFuture<Packet>) future).complete(packet);
+              packetCallbackFacade.remove(uniqueId);
             });
   }
 }
