@@ -38,12 +38,17 @@ final class PacketSubscriberImpl implements PacketSubscriber {
         Packet.class,
         packet -> {
           final String replyChannelName = packet.getReplyChannelName();
+          if (replyChannelName == null || replyChannelName.isEmpty()) {
+            throw new PacketProcessingException(
+                "Packet's reply channel name cannot be null or empty %s"
+                    .formatted(packet.getClass()));
+          }
+
           loggerFacade.log(
               FINEST,
               "Received request with %s reply channel and responded with %s packet",
               replyChannelName,
               packet.getClass().getName());
-
           packetPublisher.publish(replyChannelName, packet);
         });
   }
