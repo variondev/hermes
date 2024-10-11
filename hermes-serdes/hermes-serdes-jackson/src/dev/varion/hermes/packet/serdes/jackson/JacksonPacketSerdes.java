@@ -58,7 +58,7 @@ public final class JacksonPacketSerdes implements PacketSerdes {
     try {
       return mapper.writeValueAsBytes(packet);
     } catch (final JsonProcessingException exception) {
-      throw new PacketSerdesException("Could not deserialize packet", exception);
+      throw new PacketSerdesException("Could not serialize packet", exception);
     }
   }
 }
