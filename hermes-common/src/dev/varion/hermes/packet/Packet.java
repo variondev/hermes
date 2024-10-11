@@ -9,7 +9,6 @@ import java.util.UUID;
 public abstract class Packet implements Event {
 
   private UUID uniqueId;
-  private String replyChannelName;
 
   protected Packet(final UUID uniqueId) {
     this.uniqueId = uniqueId;
@@ -23,16 +22,8 @@ public abstract class Packet implements Event {
     return uniqueId;
   }
 
-  protected void setUniqueId(final UUID uniqueId) {
+  public void setUniqueId(final UUID uniqueId) {
     this.uniqueId = uniqueId;
-  }
-
-  public String getReplyChannelName() {
-    return replyChannelName;
-  }
-
-  public void setReplyChannelName(final String replyChannelName) {
-    this.replyChannelName = replyChannelName;
   }
 
   @Override

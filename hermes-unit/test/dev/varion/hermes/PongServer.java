@@ -6,6 +6,7 @@ import dev.shiza.dew.subscription.Subscribe;
 import dev.shiza.dew.subscription.Subscriber;
 import dev.varion.hermes.logger.LoggerFacade;
 import dev.varion.hermes.message.NatsMessageBroker;
+import dev.varion.hermes.packet.serdes.PacketSerdes;
 import dev.varion.hermes.packet.serdes.jackson.JacksonPacketSerdes;
 import io.nats.client.Nats;
 import java.io.IOException;
@@ -16,10 +17,11 @@ public final class PongServer {
 
   @SuppressWarnings({"BusyWait", "InfiniteLoopStatement"})
   public static void main(final String[] args) throws IOException, InterruptedException {
+    final PacketSerdes packetSerdes = JacksonPacketSerdes.create();
     final Hermes hermes =
         Hermes.newBuilder()
-            .withMessageBroker(NatsMessageBroker.create(Nats.connect()))
-            .withPacketSerdes(JacksonPacketSerdes.create())
+            .withMessageBroker(NatsMessageBroker.create(Nats.connect(), packetSerdes))
+            .withPacketSerdes(packetSerdes)
             .withLoggerFacade(LoggerFacade.create(true))
             .build();
 
@@ -39,8 +41,13 @@ public final class PongServer {
       // if response cannot be sent it's also
       // fine you can return null
       final PongPacket response = new PongPacket(request.getMessage() + " Pong!");
-      response.setReplyChannelName(request.getReplyChannelName());
+      response.setUniqueId(request.getUniqueId());
       return response;
+    }
+
+    @Subscribe
+    public void receive(final PeerPacket packet) {
+      System.out.printf("Received peer packet: %s%n", packet.getContent());
     }
 
     @Override

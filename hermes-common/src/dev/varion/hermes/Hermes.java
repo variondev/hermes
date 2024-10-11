@@ -5,10 +5,12 @@ import dev.shiza.dew.subscription.Subscriber;
 import dev.varion.hermes.logger.LoggerFacade;
 import dev.varion.hermes.message.MessageBroker;
 import dev.varion.hermes.packet.Packet;
-import dev.varion.hermes.packet.PacketProcessor;
 import dev.varion.hermes.packet.PacketPublisher;
 import dev.varion.hermes.packet.PacketRequester;
 import dev.varion.hermes.packet.PacketSubscriber;
+import dev.varion.hermes.packet.callback.PacketCallbackFacade;
+import dev.varion.hermes.packet.callback.PacketCallbackRequest;
+import dev.varion.hermes.packet.callback.PacketCallbackResponse;
 import dev.varion.hermes.packet.serdes.PacketSerdes;
 import java.io.IOException;
 import java.util.concurrent.CompletableFuture;
@@ -23,7 +25,8 @@ public interface Hermes {
 
   void subscribe(Subscriber subscriber);
 
-  <T extends Packet, R extends Packet> CompletableFuture<R> request(String channelName, T packet);
+  <T extends Packet & PacketCallbackResponse, R extends Packet & PacketCallbackRequest>
+      CompletableFuture<T> request(String channelName, R request);
 
   void close() throws IOException;
 
@@ -65,19 +68,14 @@ public interface Hermes {
         throw new HermesException("Missing packet serdes.");
       }
 
-      final PacketProcessor packetProcessor = PacketProcessor.create(loggerFacade, packetSerdes);
+      final PacketCallbackFacade packetCallbackFacade = PacketCallbackFacade.create();
       final PacketPublisher packetPublisher =
           PacketPublisher.create(loggerFacade, messageBroker, packetSerdes);
       final PacketRequester packetRequester =
-          PacketRequester.create(loggerFacade, messageBroker, packetProcessor, packetSerdes);
+          PacketRequester.create(loggerFacade, messageBroker, packetSerdes, packetCallbackFacade);
       final PacketSubscriber packetSubscriber =
           PacketSubscriber.create(
-              eventBus,
-              loggerFacade,
-              messageBroker,
-              packetPublisher,
-              packetProcessor,
-              packetSerdes);
+              eventBus, loggerFacade, messageBroker, packetPublisher, packetCallbackFacade);
       return new HermesImpl(
           loggerFacade, messageBroker, packetPublisher, packetRequester, packetSubscriber);
     }

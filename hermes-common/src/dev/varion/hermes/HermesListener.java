@@ -1,7 +1,9 @@
 package dev.varion.hermes;
 
+import dev.varion.hermes.packet.Packet;
+
 @FunctionalInterface
 public interface HermesListener {
 
-  void receive(String replyChannelName, byte[] payload);
+  void receive(String channelName, Packet packet);
 }

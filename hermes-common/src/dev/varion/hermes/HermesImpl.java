@@ -9,6 +9,8 @@ import dev.varion.hermes.packet.Packet;
 import dev.varion.hermes.packet.PacketPublisher;
 import dev.varion.hermes.packet.PacketRequester;
 import dev.varion.hermes.packet.PacketSubscriber;
+import dev.varion.hermes.packet.callback.PacketCallbackRequest;
+import dev.varion.hermes.packet.callback.PacketCallbackResponse;
 import java.io.IOException;
 import java.util.concurrent.CompletableFuture;
 
@@ -49,9 +51,9 @@ final class HermesImpl implements Hermes {
   }
 
   @Override
-  public <T extends Packet, R extends Packet> CompletableFuture<R> request(
-      final String channelName, final T packet) {
-    return packetRequester.request(channelName, packet);
+  public <T extends Packet & PacketCallbackResponse, R extends Packet & PacketCallbackRequest>
+      CompletableFuture<T> request(final String channelName, final R request) {
+    return packetRequester.request(channelName, request);
   }
 
   @Override

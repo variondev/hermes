@@ -9,48 +9,37 @@ import dev.shiza.dew.subscription.Subscriber;
 import dev.shiza.dew.subscription.SubscribingException;
 import dev.varion.hermes.logger.LoggerFacade;
 import dev.varion.hermes.message.MessageBroker;
-import dev.varion.hermes.packet.serdes.PacketSerdes;
+import dev.varion.hermes.packet.callback.PacketCallbackFacade;
+import dev.varion.hermes.packet.callback.PacketCallbackSubscriber;
 import java.lang.reflect.Method;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 final class PacketSubscriberImpl implements PacketSubscriber {
 
   private final EventBus eventBus;
   private final LoggerFacade loggerFacade;
   private final MessageBroker messageBroker;
-  private final PacketProcessor packetProcessor;
-  private final PacketSerdes packetSerdes;
 
   PacketSubscriberImpl(
       final EventBus eventBus,
       final LoggerFacade loggerFacade,
       final MessageBroker messageBroker,
       final PacketPublisher packetPublisher,
-      final PacketProcessor packetProcessor,
-      final PacketSerdes packetSerdes) {
+      final PacketCallbackFacade packetCallbackFacade) {
     this.eventBus = eventBus;
     this.loggerFacade = loggerFacade;
     this.messageBroker = messageBroker;
-    this.packetProcessor = packetProcessor;
-    this.packetSerdes = packetSerdes;
     eventBus.result(
         Packet.class,
         packet -> {
-          final String replyChannelName = packet.getReplyChannelName();
-          if (replyChannelName == null || replyChannelName.isEmpty()) {
-            throw new PacketProcessingException(
-                "Packet's reply channel name cannot be null or empty %s"
-                    .formatted(packet.getClass()));
-          }
-
           loggerFacade.log(
-              FINEST,
-              "Received request with %s reply channel and responded with %s packet",
-              replyChannelName,
-              packet.getClass().getName());
-          packetPublisher.publish(replyChannelName, packet);
+              FINEST, "Received request and responded with %s packet", packet.getClass().getName());
+          packetPublisher.publish("callbacks", packet);
         });
+    messageBroker.subscribe(
+        "callbacks", PacketCallbackSubscriber.create(loggerFacade, packetCallbackFacade));
   }
 
   @Override
@@ -85,11 +74,10 @@ final class PacketSubscriberImpl implements PacketSubscriber {
 
     messageBroker.subscribe(
         identity,
-        (replyChannelName, payload) -> {
-          final Packet packet = packetProcessor.processIncomingPacket(payload);
+        (channelName, packet) -> {
+          final UUID uniqueId = packet.getUniqueId();
           final boolean whetherListensForPacket = packetTypes.contains(packet.getClass());
           if (whetherListensForPacket) {
-            packet.setReplyChannelName(replyChannelName);
             eventBus.publish(packet, identity);
             loggerFacade.log(
                 FINEST,
@@ -97,7 +85,7 @@ final class PacketSubscriberImpl implements PacketSubscriber {
                 packet.getClass().getName(),
                 packet.getUniqueId(),
                 identity,
-                replyChannelName,
+                uniqueId,
                 subscriber.getClass().getName());
           } else {
             loggerFacade.log(
@@ -106,7 +94,7 @@ final class PacketSubscriberImpl implements PacketSubscriber {
                 packet.getClass().getName(),
                 packet.getUniqueId(),
                 identity,
-                replyChannelName);
+                uniqueId);
           }
         });
   }
