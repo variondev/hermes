@@ -2,15 +2,13 @@ package dev.varion.hermes;
 
 import dev.shiza.dew.event.EventBus;
 import dev.shiza.dew.subscription.Subscriber;
-import dev.varion.hermes.logger.LoggerFacade;
 import dev.varion.hermes.message.MessageBroker;
 import dev.varion.hermes.packet.Packet;
 import dev.varion.hermes.packet.PacketPublisher;
 import dev.varion.hermes.packet.PacketRequester;
 import dev.varion.hermes.packet.PacketSubscriber;
+import dev.varion.hermes.packet.callback.PacketCallback;
 import dev.varion.hermes.packet.callback.PacketCallbackFacade;
-import dev.varion.hermes.packet.callback.PacketCallbackRequest;
-import dev.varion.hermes.packet.callback.PacketCallbackResponse;
 import dev.varion.hermes.packet.serdes.PacketSerdes;
 import java.io.IOException;
 import java.time.Duration;
@@ -26,25 +24,19 @@ public interface Hermes {
 
   void subscribe(Subscriber subscriber);
 
-  <T extends Packet & PacketCallbackResponse, R extends Packet & PacketCallbackRequest>
+  <T extends Packet & PacketCallback, R extends Packet & PacketCallback>
       CompletableFuture<T> request(String channelName, R request);
 
   void close() throws IOException;
 
   final class HermesBuilder {
 
-    private LoggerFacade loggerFacade = LoggerFacade.create(false);
     private MessageBroker messageBroker;
     private PacketSerdes packetSerdes;
     private EventBus eventBus = EventBus.create().publisher(Runnable::run);
     private Duration requestCleanupInterval = Duration.ofSeconds(10L);
 
     HermesBuilder() {}
-
-    public HermesBuilder withLoggerFacade(final LoggerFacade loggerFacade) {
-      this.loggerFacade = loggerFacade;
-      return this;
-    }
 
     public HermesBuilder withMessageBroker(final MessageBroker messageBroker) {
       this.messageBroker = messageBroker;
@@ -76,25 +68,14 @@ public interface Hermes {
       }
 
       final PacketCallbackFacade packetCallbackFacade = PacketCallbackFacade.create();
-      final PacketPublisher packetPublisher =
-          PacketPublisher.create(loggerFacade, messageBroker, packetSerdes);
+      final PacketPublisher packetPublisher = PacketPublisher.create(messageBroker, packetSerdes);
       final PacketRequester packetRequester =
           PacketRequester.create(
-              loggerFacade,
-              messageBroker,
-              packetSerdes,
-              packetCallbackFacade,
-              requestCleanupInterval);
+              messageBroker, packetSerdes, packetCallbackFacade, requestCleanupInterval);
       final PacketSubscriber packetSubscriber =
           PacketSubscriber.create(
-              eventBus,
-              loggerFacade,
-              messageBroker,
-              packetPublisher,
-              packetCallbackFacade,
-              packetSerdes);
-      return new HermesImpl(
-          loggerFacade, messageBroker, packetPublisher, packetRequester, packetSubscriber);
+              eventBus, messageBroker, packetPublisher, packetCallbackFacade, packetSerdes);
+      return new HermesImpl(messageBroker, packetPublisher, packetRequester, packetSubscriber);
     }
   }
 }

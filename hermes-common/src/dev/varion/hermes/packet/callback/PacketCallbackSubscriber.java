@@ -1,9 +1,7 @@
 package dev.varion.hermes.packet.callback;
 
-import static java.util.logging.Level.FINEST;
 
 import dev.varion.hermes.HermesListener;
-import dev.varion.hermes.logger.LoggerFacade;
 import dev.varion.hermes.packet.Packet;
 import dev.varion.hermes.packet.serdes.PacketSerdes;
 import java.util.UUID;
@@ -11,24 +9,18 @@ import java.util.concurrent.CompletableFuture;
 
 public final class PacketCallbackSubscriber implements HermesListener {
 
-  private final LoggerFacade loggerFacade;
   private final PacketSerdes packetSerdes;
   private final PacketCallbackFacade packetCallbackFacade;
 
   PacketCallbackSubscriber(
-      final LoggerFacade loggerFacade,
-      final PacketSerdes packetSerdes,
-      final PacketCallbackFacade packetCallbackFacade) {
-    this.loggerFacade = loggerFacade;
+      final PacketSerdes packetSerdes, final PacketCallbackFacade packetCallbackFacade) {
     this.packetSerdes = packetSerdes;
     this.packetCallbackFacade = packetCallbackFacade;
   }
 
   public static PacketCallbackSubscriber create(
-      final LoggerFacade loggerFacade,
-      final PacketSerdes packetSerdes,
-      final PacketCallbackFacade packetCallbackFacade) {
-    return new PacketCallbackSubscriber(loggerFacade, packetSerdes, packetCallbackFacade);
+      final PacketSerdes packetSerdes, final PacketCallbackFacade packetCallbackFacade) {
+    return new PacketCallbackSubscriber(packetSerdes, packetCallbackFacade);
   }
 
   @Override
@@ -39,15 +31,9 @@ public final class PacketCallbackSubscriber implements HermesListener {
         .findByUniqueId(uniqueId)
         .ifPresent(
             future -> {
-              if (packet instanceof final PacketCallbackResponse response) {
+              if (packet instanceof final PacketCallback response) {
                 //noinspection unchecked
-                ((CompletableFuture<PacketCallbackResponse>) future).complete(response);
-                loggerFacade.log(
-                    FINEST,
-                    "Request of %s has been completed with response %s (%s)",
-                    uniqueId,
-                    response.getClass().getSimpleName(),
-                    response.getUniqueId());
+                ((CompletableFuture<PacketCallback>) future).complete(response);
                 packetCallbackFacade.remove(uniqueId);
               }
             });

@@ -4,7 +4,6 @@ import static java.lang.Thread.sleep;
 
 import dev.shiza.dew.subscription.Subscribe;
 import dev.shiza.dew.subscription.Subscriber;
-import dev.varion.hermes.logger.LoggerFacade;
 import dev.varion.hermes.message.NatsMessageBroker;
 import dev.varion.hermes.packet.serdes.jackson.JacksonPacketSerdes;
 import io.nats.client.Nats;
@@ -20,7 +19,6 @@ public final class PongServer {
         Hermes.newBuilder()
             .withMessageBroker(NatsMessageBroker.create(Nats.connect()))
             .withPacketSerdes(JacksonPacketSerdes.create())
-            .withLoggerFacade(LoggerFacade.create(true))
             .build();
 
     hermes.subscribe(new PongListener());

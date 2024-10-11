@@ -1,13 +1,11 @@
 package dev.varion.hermes.packet;
 
 import static java.util.Arrays.stream;
-import static java.util.logging.Level.FINEST;
 
 import dev.shiza.dew.event.EventBus;
 import dev.shiza.dew.subscription.Subscribe;
 import dev.shiza.dew.subscription.Subscriber;
 import dev.shiza.dew.subscription.SubscribingException;
-import dev.varion.hermes.logger.LoggerFacade;
 import dev.varion.hermes.message.MessageBroker;
 import dev.varion.hermes.packet.callback.PacketCallbackFacade;
 import dev.varion.hermes.packet.callback.PacketCallbackSubscriber;
@@ -15,36 +13,29 @@ import dev.varion.hermes.packet.serdes.PacketSerdes;
 import java.lang.reflect.Method;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.UUID;
 
 final class PacketSubscriberImpl implements PacketSubscriber {
 
   private final EventBus eventBus;
-  private final LoggerFacade loggerFacade;
   private final MessageBroker messageBroker;
   private final PacketSerdes packetSerdes;
 
   PacketSubscriberImpl(
       final EventBus eventBus,
-      final LoggerFacade loggerFacade,
       final MessageBroker messageBroker,
       final PacketPublisher packetPublisher,
       final PacketCallbackFacade packetCallbackFacade,
       final PacketSerdes packetSerdes) {
     this.eventBus = eventBus;
-    this.loggerFacade = loggerFacade;
     this.messageBroker = messageBroker;
     this.packetSerdes = packetSerdes;
     eventBus.result(
         Packet.class,
         packet -> {
-          loggerFacade.log(
-              FINEST, "Received request and responded with %s packet", packet.getClass().getName());
           packetPublisher.publish("callbacks", packet);
         });
     messageBroker.subscribe(
-        "callbacks",
-        PacketCallbackSubscriber.create(loggerFacade, packetSerdes, packetCallbackFacade));
+        "callbacks", PacketCallbackSubscriber.create(packetSerdes, packetCallbackFacade));
   }
 
   @Override
@@ -81,26 +72,9 @@ final class PacketSubscriberImpl implements PacketSubscriber {
         identity,
         (channelName, payload) -> {
           final Packet packet = packetSerdes.deserialize(payload);
-          final UUID uniqueId = packet.getUniqueId();
           final boolean whetherListensForPacket = packetTypes.contains(packet.getClass());
           if (whetherListensForPacket) {
             eventBus.publish(packet, identity);
-            loggerFacade.log(
-                FINEST,
-                "Received packet of type %s (%s) from %s channel with %s reply channel and forwarded to %s listener",
-                packet.getClass().getName(),
-                packet.getUniqueId(),
-                identity,
-                uniqueId,
-                subscriber.getClass().getName());
-          } else {
-            loggerFacade.log(
-                FINEST,
-                "Received packet of type %s (%s) from %s channel with %s reply channel",
-                packet.getClass().getName(),
-                packet.getUniqueId(),
-                identity,
-                uniqueId);
           }
         });
   }

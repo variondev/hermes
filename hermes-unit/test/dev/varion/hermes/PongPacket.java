@@ -1,9 +1,9 @@
 package dev.varion.hermes;
 
-import dev.varion.hermes.packet.callback.PacketCallbackResponse;
+import dev.varion.hermes.packet.callback.PacketCallback;
 import dev.varion.hermes.packet.serdes.jackson.JacksonPacket;
 
-public class PongPacket extends JacksonPacket implements PacketCallbackResponse {
+public class PongPacket extends JacksonPacket implements PacketCallback {
 
   // This can be any type which implements Serializable
   private String message;

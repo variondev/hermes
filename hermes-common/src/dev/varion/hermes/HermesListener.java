@@ -1,6 +1,5 @@
 package dev.varion.hermes;
 
-
 @FunctionalInterface
 public interface HermesListener {
 
