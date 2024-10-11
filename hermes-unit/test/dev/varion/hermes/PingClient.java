@@ -2,7 +2,7 @@ package dev.varion.hermes;
 
 import dev.varion.hermes.logger.LoggerFacade;
 import dev.varion.hermes.message.NatsMessageBroker;
-import dev.varion.hermes.serdes.jackson.JacksonPacketSerdes;
+import dev.varion.hermes.packet.serdes.jackson.JacksonPacketSerdes;
 import io.nats.client.Nats;
 import java.io.IOException;
 

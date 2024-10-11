@@ -1,13 +1,11 @@
 package dev.varion.hermes;
 
-import static dev.varion.hermes.logger.LoggerFacade.create;
-
 import dev.shiza.dew.event.EventBus;
 import dev.shiza.dew.subscription.Subscriber;
-import dev.shiza.dew.subscription.SubscriptionFacade;
 import dev.varion.hermes.logger.LoggerFacade;
 import dev.varion.hermes.message.MessageBroker;
 import dev.varion.hermes.packet.Packet;
+import dev.varion.hermes.packet.PacketProcessor;
 import dev.varion.hermes.packet.PacketPublisher;
 import dev.varion.hermes.packet.PacketRequester;
 import dev.varion.hermes.packet.PacketSubscriber;
@@ -31,12 +29,10 @@ public interface Hermes {
 
   final class HermesBuilder {
 
-    private LoggerFacade loggerFacade = create(false);
+    private LoggerFacade loggerFacade = LoggerFacade.create(false);
     private MessageBroker messageBroker;
     private PacketSerdes packetSerdes;
-    private EventBus eventBus =
-        EventBus.create(SubscriptionFacade.create(), HermesResultHandlerService.create())
-            .publisher(Runnable::run);
+    private EventBus eventBus = EventBus.create().publisher(Runnable::run);
 
     HermesBuilder() {}
 
@@ -69,13 +65,19 @@ public interface Hermes {
         throw new HermesException("Missing packet serdes.");
       }
 
+      final PacketProcessor packetProcessor = PacketProcessor.create(loggerFacade, packetSerdes);
       final PacketPublisher packetPublisher =
           PacketPublisher.create(loggerFacade, messageBroker, packetSerdes);
       final PacketRequester packetRequester =
-          PacketRequester.create(loggerFacade, messageBroker, packetSerdes);
+          PacketRequester.create(loggerFacade, messageBroker, packetProcessor, packetSerdes);
       final PacketSubscriber packetSubscriber =
           PacketSubscriber.create(
-              eventBus, loggerFacade, messageBroker, packetPublisher, packetSerdes);
+              eventBus,
+              loggerFacade,
+              messageBroker,
+              packetPublisher,
+              packetProcessor,
+              packetSerdes);
       return new HermesImpl(
           loggerFacade, messageBroker, packetPublisher, packetRequester, packetSubscriber);
     }

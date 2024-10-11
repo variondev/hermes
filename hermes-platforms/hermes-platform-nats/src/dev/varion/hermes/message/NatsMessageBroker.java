@@ -3,6 +3,7 @@ package dev.varion.hermes.message;
 import static java.util.logging.Level.SEVERE;
 import static java.util.logging.Logger.getLogger;
 
+import dev.varion.hermes.HermesListener;
 import io.nats.client.Connection;
 import io.nats.client.Message;
 import io.nats.client.Nats;
@@ -40,10 +41,9 @@ public final class NatsMessageBroker implements MessageBroker {
   }
 
   @Override
-  public void subscribe(final String channelName, final MessageListener listener) {
+  public void subscribe(final String channelName, final HermesListener listener) {
     connection
-        .createDispatcher(
-            message -> listener.receive(channelName, message.getReplyTo(), message.getData()))
+        .createDispatcher(message -> listener.receive(message.getReplyTo(), message.getData()))
         .subscribe(channelName);
   }
 

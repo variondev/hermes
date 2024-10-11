@@ -1,5 +1,6 @@
 package dev.varion.hermes.packet;
 
+import static java.util.Arrays.stream;
 import static java.util.logging.Level.FINEST;
 
 import dev.shiza.dew.event.EventBus;
@@ -8,16 +9,17 @@ import dev.shiza.dew.subscription.Subscriber;
 import dev.shiza.dew.subscription.SubscribingException;
 import dev.varion.hermes.logger.LoggerFacade;
 import dev.varion.hermes.message.MessageBroker;
-import dev.varion.hermes.message.MessageProcessingException;
 import dev.varion.hermes.packet.serdes.PacketSerdes;
 import java.lang.reflect.Method;
-import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 final class PacketSubscriberImpl implements PacketSubscriber {
 
   private final EventBus eventBus;
   private final LoggerFacade loggerFacade;
   private final MessageBroker messageBroker;
+  private final PacketProcessor packetProcessor;
   private final PacketSerdes packetSerdes;
 
   PacketSubscriberImpl(
@@ -25,10 +27,12 @@ final class PacketSubscriberImpl implements PacketSubscriber {
       final LoggerFacade loggerFacade,
       final MessageBroker messageBroker,
       final PacketPublisher packetPublisher,
+      final PacketProcessor packetProcessor,
       final PacketSerdes packetSerdes) {
     this.eventBus = eventBus;
     this.loggerFacade = loggerFacade;
     this.messageBroker = messageBroker;
+    this.packetProcessor = packetProcessor;
     this.packetSerdes = packetSerdes;
     eventBus.result(
         Packet.class,
@@ -52,6 +56,8 @@ final class PacketSubscriberImpl implements PacketSubscriber {
     }
 
     eventBus.subscribe(subscriber);
+
+    final Set<Class<? extends Packet>> packetTypes = new HashSet<>();
     for (final Method method : subscriber.getClass().getDeclaredMethods()) {
       if (!method.isAnnotationPresent(Subscribe.class)) {
         continue;
@@ -65,15 +71,30 @@ final class PacketSubscriberImpl implements PacketSubscriber {
       //noinspection unchecked
       final Class<? extends Packet> packetType =
           (Class<? extends Packet>)
-              Arrays.stream(method.getParameterTypes())
+              stream(method.getParameterTypes())
                   .filter(Packet.class::isAssignableFrom)
                   .findAny()
                   .orElseThrow();
+      packetTypes.add(packetType);
+    }
 
-      messageBroker.subscribe(
-          identity,
-          (ignored, replyChannelName, payload) -> {
-            final Packet packet = processIncomingPacket(payload);
+    messageBroker.subscribe(
+        identity,
+        (replyChannelName, payload) -> {
+          final Packet packet = packetProcessor.processIncomingPacket(payload);
+          final boolean whetherListensForPacket = packetTypes.contains(packet.getClass());
+          if (whetherListensForPacket) {
+            packet.setReplyChannelName(replyChannelName);
+            eventBus.publish(packet, identity);
+            loggerFacade.log(
+                FINEST,
+                "Received packet of type %s (%s) from %s channel with %s reply channel and forwarded to %s listener",
+                packet.getClass().getName(),
+                packet.getUniqueId(),
+                identity,
+                replyChannelName,
+                subscriber.getClass().getName());
+          } else {
             loggerFacade.log(
                 FINEST,
                 "Received packet of type %s (%s) from %s channel with %s reply channel",
@@ -81,33 +102,7 @@ final class PacketSubscriberImpl implements PacketSubscriber {
                 packet.getUniqueId(),
                 identity,
                 replyChannelName);
-
-            final boolean whetherListensForPacket = packetType.equals(packet.getClass());
-            if (whetherListensForPacket) {
-              packet.setReplyChannelName(replyChannelName);
-              eventBus.publish(packet, identity);
-              loggerFacade.log(
-                  FINEST,
-                  "Received packet of type %s (%s) from %s channel with %s reply channel and forwarded to %s listener",
-                  packet.getClass().getName(),
-                  packet.getUniqueId(),
-                  identity,
-                  replyChannelName,
-                  subscriber.getClass().getName());
-            }
-          });
-    }
-  }
-
-  @Override
-  public <T extends Packet> T processIncomingPacket(final byte[] payload)
-      throws MessageProcessingException {
-    try {
-      //noinspection unchecked
-      return (T) packetSerdes.deserialize(payload);
-    } catch (final Exception exception) {
-      throw new MessageProcessingException(
-          "Could not process incoming packet, because of unexpected exception.", exception);
-    }
+          }
+        });
   }
 }

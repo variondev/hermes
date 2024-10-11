@@ -6,7 +6,7 @@ import dev.shiza.dew.subscription.Subscribe;
 import dev.shiza.dew.subscription.Subscriber;
 import dev.varion.hermes.logger.LoggerFacade;
 import dev.varion.hermes.message.NatsMessageBroker;
-import dev.varion.hermes.serdes.jackson.JacksonPacketSerdes;
+import dev.varion.hermes.packet.serdes.jackson.JacksonPacketSerdes;
 import io.nats.client.Nats;
 import java.io.IOException;
 
@@ -35,6 +35,9 @@ public final class PongServer {
 
     @Subscribe
     public PongPacket receive(final PingPacket request) {
+      // method can be a void, no need to return any packets,
+      // if response cannot be sent it's also
+      // fine you can return null
       final PongPacket response = new PongPacket(request.getMessage() + " Pong!");
       response.setReplyChannelName(request.getReplyChannelName());
       return response;

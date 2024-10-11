@@ -1,10 +1,8 @@
 package dev.varion.hermes.logger;
 
-import static java.util.logging.Level.ALL;
 import static java.util.logging.Logger.getLogger;
 
-import java.util.logging.ConsoleHandler;
-import java.util.logging.Handler;
+import dev.varion.hermes.Hermes;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -15,7 +13,7 @@ final class LoggerService implements LoggerFacade {
 
   LoggerService(final boolean debug) {
     this.debug = debug;
-    logger = getConfiguredLogger();
+    logger = getLogger(Hermes.class.getName());
   }
 
   @Override
@@ -25,19 +23,5 @@ final class LoggerService implements LoggerFacade {
     }
 
     logger.log(level, message.formatted(parameters));
-  }
-
-  private Logger getConfiguredLogger() {
-    final Logger underlyingLogger = getLogger(getClass().getSimpleName());
-    for (final Handler handler : underlyingLogger.getHandlers()) {
-      underlyingLogger.removeHandler(handler);
-    }
-
-    final Handler handler = new ConsoleHandler();
-    handler.setLevel(ALL);
-
-    underlyingLogger.addHandler(handler);
-    underlyingLogger.setLevel(ALL);
-    return underlyingLogger;
   }
 }

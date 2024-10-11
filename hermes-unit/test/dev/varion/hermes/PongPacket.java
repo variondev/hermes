@@ -1,6 +1,6 @@
 package dev.varion.hermes;
 
-import dev.varion.hermes.serdes.jackson.JacksonPacket;
+import dev.varion.hermes.packet.serdes.jackson.JacksonPacket;
 
 public class PongPacket extends JacksonPacket {
 

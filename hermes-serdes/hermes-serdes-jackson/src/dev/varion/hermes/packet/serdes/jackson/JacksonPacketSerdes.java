@@ -1,4 +1,4 @@
-package dev.varion.hermes.serdes.jackson;
+package dev.varion.hermes.packet.serdes.jackson;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonInclude;
