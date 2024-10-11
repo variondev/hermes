@@ -13,6 +13,7 @@ import dev.varion.hermes.packet.callback.PacketCallbackRequest;
 import dev.varion.hermes.packet.callback.PacketCallbackResponse;
 import dev.varion.hermes.packet.serdes.PacketSerdes;
 import java.io.IOException;
+import java.time.Duration;
 import java.util.concurrent.CompletableFuture;
 
 public interface Hermes {
@@ -36,6 +37,7 @@ public interface Hermes {
     private MessageBroker messageBroker;
     private PacketSerdes packetSerdes;
     private EventBus eventBus = EventBus.create().publisher(Runnable::run);
+    private Duration requestCleanupInterval = Duration.ofSeconds(10L);
 
     HermesBuilder() {}
 
@@ -59,6 +61,11 @@ public interface Hermes {
       return this;
     }
 
+    public HermesBuilder withRequestCleanupInterval(final Duration requestCleanupInterval) {
+      this.requestCleanupInterval = requestCleanupInterval;
+      return this;
+    }
+
     public Hermes build() throws HermesException {
       if (messageBroker == null) {
         throw new HermesException("Missing message broker.");
@@ -72,7 +79,12 @@ public interface Hermes {
       final PacketPublisher packetPublisher =
           PacketPublisher.create(loggerFacade, messageBroker, packetSerdes);
       final PacketRequester packetRequester =
-          PacketRequester.create(loggerFacade, messageBroker, packetSerdes, packetCallbackFacade);
+          PacketRequester.create(
+              loggerFacade,
+              messageBroker,
+              packetSerdes,
+              packetCallbackFacade,
+              requestCleanupInterval);
       final PacketSubscriber packetSubscriber =
           PacketSubscriber.create(
               eventBus, loggerFacade, messageBroker, packetPublisher, packetCallbackFacade);

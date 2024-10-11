@@ -1,5 +1,6 @@
 package dev.varion.hermes.packet;
 
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.logging.Level.FINEST;
 
 import dev.shiza.dew.event.EventPublishingException;
@@ -9,6 +10,7 @@ import dev.varion.hermes.packet.callback.PacketCallbackFacade;
 import dev.varion.hermes.packet.callback.PacketCallbackRequest;
 import dev.varion.hermes.packet.callback.PacketCallbackResponse;
 import dev.varion.hermes.packet.serdes.PacketSerdes;
+import java.time.Duration;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
@@ -18,16 +20,19 @@ final class PacketRequesterImpl implements PacketRequester {
   private final MessageBroker messageBroker;
   private final PacketSerdes packetSerdes;
   private final PacketCallbackFacade packetCallbackFacade;
+  private final Duration requestCleanupInterval;
 
   PacketRequesterImpl(
       final LoggerFacade loggerFacade,
       final MessageBroker messageBroker,
       final PacketSerdes packetSerdes,
-      final PacketCallbackFacade packetCallbackFacade) {
+      final PacketCallbackFacade packetCallbackFacade,
+      final Duration requestCleanupInterval) {
     this.loggerFacade = loggerFacade;
     this.messageBroker = messageBroker;
     this.packetSerdes = packetSerdes;
     this.packetCallbackFacade = packetCallbackFacade;
+    this.requestCleanupInterval = requestCleanupInterval;
   }
 
   @Override
@@ -52,7 +57,7 @@ final class PacketRequesterImpl implements PacketRequester {
       final CompletableFuture<T> completableFuture = new CompletableFuture<>();
       messageBroker.publish(channelName, packetSerdes.serialize(packet));
       packetCallbackFacade.add(uniqueId, completableFuture);
-      return completableFuture;
+      return completableFuture.orTimeout(requestCleanupInterval.toMillis(), MILLISECONDS);
 
     } catch (final Exception exception) {
       throw new EventPublishingException(
