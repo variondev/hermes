@@ -40,8 +40,8 @@ final class HermesImpl implements Hermes {
   }
 
   @Override
-  public <T extends Packet & PacketCallback, R extends Packet & PacketCallback>
-      CompletableFuture<T> request(final String channelName, final R request) {
+  public <T extends Packet & PacketCallback> CompletableFuture<T> request(
+      final String channelName, final Packet request) {
     return packetRequester.request(channelName, request);
   }
 

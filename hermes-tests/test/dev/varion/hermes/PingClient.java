@@ -17,7 +17,7 @@ public final class PingClient {
             .build();
 
     hermes
-        .<PongPacket, PingPacket>request("tests", new PingPacket("Ping!"))
+        .<PongPacket>request("tests", new PingPacket("Ping!"))
         .thenAccept(
             packet ->
                 System.out.printf(

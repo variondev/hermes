@@ -30,8 +30,8 @@ final class PacketRequesterImpl implements PacketRequester {
   }
 
   @Override
-  public <T extends Packet & PacketCallback, R extends Packet & PacketCallback>
-      CompletableFuture<T> request(final String channelName, final R packet) {
+  public <T extends Packet & PacketCallback> CompletableFuture<T> request(
+      final String channelName, final Packet packet) {
     final UUID uniqueId = packet.getUniqueId();
     try {
       final CompletableFuture<T> completableFuture = new CompletableFuture<>();

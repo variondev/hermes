@@ -24,8 +24,8 @@ public interface Hermes {
 
   void subscribe(Subscriber subscriber);
 
-  <T extends Packet & PacketCallback, R extends Packet & PacketCallback>
-      CompletableFuture<T> request(String channelName, R request);
+  <T extends Packet & PacketCallback> CompletableFuture<T> request(
+      String channelName, Packet request);
 
   void close() throws IOException;
 

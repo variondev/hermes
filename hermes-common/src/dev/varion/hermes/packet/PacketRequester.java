@@ -18,6 +18,6 @@ public interface PacketRequester {
         messageBroker, packetSerdes, packetCallbackFacade, requestCleanupInterval);
   }
 
-  <T extends Packet & PacketCallback, R extends Packet & PacketCallback>
-      CompletableFuture<T> request(String channelName, R packet);
+  <T extends Packet & PacketCallback> CompletableFuture<T> request(
+      String channelName, Packet request);
 }
