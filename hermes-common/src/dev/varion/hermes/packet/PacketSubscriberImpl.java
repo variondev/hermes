@@ -11,6 +11,7 @@ import dev.varion.hermes.logger.LoggerFacade;
 import dev.varion.hermes.message.MessageBroker;
 import dev.varion.hermes.packet.callback.PacketCallbackFacade;
 import dev.varion.hermes.packet.callback.PacketCallbackSubscriber;
+import dev.varion.hermes.packet.serdes.PacketSerdes;
 import java.lang.reflect.Method;
 import java.util.HashSet;
 import java.util.Set;
@@ -21,16 +22,19 @@ final class PacketSubscriberImpl implements PacketSubscriber {
   private final EventBus eventBus;
   private final LoggerFacade loggerFacade;
   private final MessageBroker messageBroker;
+  private final PacketSerdes packetSerdes;
 
   PacketSubscriberImpl(
       final EventBus eventBus,
       final LoggerFacade loggerFacade,
       final MessageBroker messageBroker,
       final PacketPublisher packetPublisher,
-      final PacketCallbackFacade packetCallbackFacade) {
+      final PacketCallbackFacade packetCallbackFacade,
+      final PacketSerdes packetSerdes) {
     this.eventBus = eventBus;
     this.loggerFacade = loggerFacade;
     this.messageBroker = messageBroker;
+    this.packetSerdes = packetSerdes;
     eventBus.result(
         Packet.class,
         packet -> {
@@ -39,7 +43,8 @@ final class PacketSubscriberImpl implements PacketSubscriber {
           packetPublisher.publish("callbacks", packet);
         });
     messageBroker.subscribe(
-        "callbacks", PacketCallbackSubscriber.create(loggerFacade, packetCallbackFacade));
+        "callbacks",
+        PacketCallbackSubscriber.create(loggerFacade, packetSerdes, packetCallbackFacade));
   }
 
   @Override
@@ -74,7 +79,8 @@ final class PacketSubscriberImpl implements PacketSubscriber {
 
     messageBroker.subscribe(
         identity,
-        (channelName, packet) -> {
+        (channelName, payload) -> {
+          final Packet packet = packetSerdes.deserialize(payload);
           final UUID uniqueId = packet.getUniqueId();
           final boolean whetherListensForPacket = packetTypes.contains(packet.getClass());
           if (whetherListensForPacket) {

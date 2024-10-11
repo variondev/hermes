@@ -5,6 +5,7 @@ import dev.shiza.dew.subscription.Subscriber;
 import dev.varion.hermes.logger.LoggerFacade;
 import dev.varion.hermes.message.MessageBroker;
 import dev.varion.hermes.packet.callback.PacketCallbackFacade;
+import dev.varion.hermes.packet.serdes.PacketSerdes;
 
 @FunctionalInterface
 public interface PacketSubscriber {
@@ -14,9 +15,10 @@ public interface PacketSubscriber {
       final LoggerFacade loggerFacade,
       final MessageBroker messageBroker,
       final PacketPublisher packetPublisher,
-      final PacketCallbackFacade packetCallbackFacade) {
+      final PacketCallbackFacade packetCallbackFacade,
+      final PacketSerdes packetSerdes) {
     return new PacketSubscriberImpl(
-        eventBus, loggerFacade, messageBroker, packetPublisher, packetCallbackFacade);
+        eventBus, loggerFacade, messageBroker, packetPublisher, packetCallbackFacade, packetSerdes);
   }
 
   void subscribe(Subscriber subscriber);

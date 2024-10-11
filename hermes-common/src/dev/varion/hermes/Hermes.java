@@ -87,7 +87,12 @@ public interface Hermes {
               requestCleanupInterval);
       final PacketSubscriber packetSubscriber =
           PacketSubscriber.create(
-              eventBus, loggerFacade, messageBroker, packetPublisher, packetCallbackFacade);
+              eventBus,
+              loggerFacade,
+              messageBroker,
+              packetPublisher,
+              packetCallbackFacade,
+              packetSerdes);
       return new HermesImpl(
           loggerFacade, messageBroker, packetPublisher, packetRequester, packetSubscriber);
     }

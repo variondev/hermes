@@ -9,21 +9,19 @@ import io.nats.client.Options;
 public final class NatsMessageBroker implements MessageBroker {
 
   private final Connection connection;
-  private final PacketSerdes packetSerdes;
 
-  NatsMessageBroker(final Connection connection, final PacketSerdes packetSerdes) {
+  NatsMessageBroker(final Connection connection) {
     this.connection = connection;
-    this.packetSerdes = packetSerdes;
   }
 
-  public static MessageBroker create(final Connection connection, final PacketSerdes packetSerdes) {
-    return new NatsMessageBroker(connection, packetSerdes);
+  public static MessageBroker create(final Connection connection) {
+    return new NatsMessageBroker(connection);
   }
 
   public static MessageBroker create(final Options options, final PacketSerdes packetSerdes)
       throws MessageBrokerException {
     try {
-      return create(Nats.connect(options), packetSerdes);
+      return create(Nats.connect(options));
     } catch (final Exception exception) {
       throw new MessageBrokerException(
           "Could not initiate a nats connection required for a message broker, because of unexpected exception.",
@@ -39,8 +37,7 @@ public final class NatsMessageBroker implements MessageBroker {
   @Override
   public void subscribe(final String channelName, final HermesListener listener) {
     connection
-        .createDispatcher(
-            message -> listener.receive(channelName, packetSerdes.deserialize(message.getData())))
+        .createDispatcher(message -> listener.receive(channelName, message.getData()))
         .subscribe(channelName);
   }
 

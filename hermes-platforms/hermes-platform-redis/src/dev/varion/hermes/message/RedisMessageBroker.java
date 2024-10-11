@@ -45,7 +45,7 @@ public final class RedisMessageBroker implements MessageBroker {
 
   @Override
   public void subscribe(final String channelName, final HermesListener listener) {
-    pubSubConnection.addListener(new RedisMessageListener(packetSerdes, channelName, listener));
+    pubSubConnection.addListener(new RedisMessageListener(channelName, listener));
     if (subscribedTopics.contains(channelName)) {
       return;
     }
