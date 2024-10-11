@@ -18,6 +18,8 @@ final class PacketSubscriberImpl implements PacketSubscriber {
 
   private final EventBus eventBus;
   private final MessageBroker messageBroker;
+  private final PacketPublisher packetPublisher;
+  private final PacketCallbackFacade packetCallbackFacade;
   private final PacketSerdes packetSerdes;
 
   PacketSubscriberImpl(
@@ -28,14 +30,11 @@ final class PacketSubscriberImpl implements PacketSubscriber {
       final PacketSerdes packetSerdes) {
     this.eventBus = eventBus;
     this.messageBroker = messageBroker;
+    this.packetPublisher = packetPublisher;
+    this.packetCallbackFacade = packetCallbackFacade;
     this.packetSerdes = packetSerdes;
-    eventBus.result(
-        Packet.class,
-        packet -> {
-          packetPublisher.publish("callbacks", packet);
-        });
-    messageBroker.subscribe(
-        "callbacks", PacketCallbackSubscriber.create(packetSerdes, packetCallbackFacade));
+    attachResultPacketHandler();
+    subscribeToCallbacks();
   }
 
   @Override
@@ -77,5 +76,14 @@ final class PacketSubscriberImpl implements PacketSubscriber {
             eventBus.publish(packet, identity);
           }
         });
+  }
+
+  private void subscribeToCallbacks() {
+    messageBroker.subscribe(
+        "callbacks", PacketCallbackSubscriber.create(packetSerdes, packetCallbackFacade));
+  }
+
+  private void attachResultPacketHandler() {
+    eventBus.result(Packet.class, packet -> packetPublisher.publish("callbacks", packet));
   }
 }
