@@ -5,8 +5,8 @@ works seamlessly with popular message brokers, so you can integrate it into your
 
 ## Additional Resources
 
-Hermes is built on some amazing libraries, like [Dew](https://github.com/rchomczyk-playground/dew)
-by [Rafał Chomczyk](https://github.com/rchomczyk).
+Hermes is built on top amazing libraries, like [Dew](https://github.com/rchomczyk-playground/dew)
+by **Rafał Chomczyk**.
 
 Feel free to explore and contribute to the project!
 
