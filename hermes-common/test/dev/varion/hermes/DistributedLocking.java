@@ -2,6 +2,7 @@ package dev.varion.hermes;
 
 import static java.lang.System.exit;
 import static java.time.Duration.ofMillis;
+import static java.time.Duration.ofSeconds;
 
 import dev.varion.hermes.bridge.redis.lettuce.keyvalue.RedisKeyValueStorage;
 import dev.varion.hermes.bridge.redis.lettuce.message.RedisMessageBroker;
@@ -11,6 +12,7 @@ import io.lettuce.core.RedisClient;
 import java.io.IOException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.stream.IntStream;
 
 public final class DistributedLocking {
 
@@ -27,37 +29,47 @@ public final class DistributedLocking {
                     .keyValue(config -> config.using(RedisKeyValueStorage.create(redisClient)))
                     .distributedLock(config -> config.using(true)));
 
-    // Create a fixed thread pool
-    final ExecutorService executorService = Executors.newFixedThreadPool(10);
+    final DistributedLock lock = hermes.distributedLocks().createLock("my_resource");
 
-    for (int j = 0; j < 10; j++) {
-      final int i = j;
-      executorService.submit(
-          () -> {
-            try {
-              final DistributedLock lock = hermes.distributedLocks().createLock("my_resource");
-              lock.execute(
-                      () -> {
+    final ExecutorService executorService = Executors.newFixedThreadPool(10);
+    IntStream.range(0, 10)
+        .forEach(
+            i ->
+                executorService.submit(
+                    () -> {
+                      while (true) {
                         try {
-                          Thread.sleep(100);
-                        } catch (final InterruptedException e) {
+                          lock.execute(
+                                  () -> {
+                                    System.out.println("Thread " + i + " acquired the lock!");
+                                    try {
+                                      Thread.sleep(100);
+                                    } catch (final InterruptedException ignored) {
+                                    }
+                                  },
+                                  ofMillis(10L),
+                                  ofSeconds(1L))
+                              .whenComplete(
+                                  (v, t) ->
+                                      System.out.println("Thread " + i + " released the lock!"))
+                              .join();
+                        } catch (final Exception e) {
                           e.printStackTrace();
                         }
-                        System.out.println("Thread " + i + " acquired the lock!");
-                      },
-                      ofMillis(1L),
-                      ofMillis(1000L))
-                  .whenComplete((v, t) -> System.out.println("Thread " + i + " released the lock!"))
-                  .join();
-            } catch (final Exception exception) {
-              exception.printStackTrace();
-            }
-          });
-    }
+                      }
+                    }));
 
     executorService.shutdown();
-    while (!executorService.isTerminated()) {}
 
+    while (!executorService.isTerminated()) {
+      System.out.println("Waiting for all tasks to finish...");
+      try {
+        Thread.sleep(1000); // Sleep for a second before checking again
+      } catch (final InterruptedException ignored) {
+      }
+    }
+
+    // Closing hermes resources
     try {
       hermes.close();
     } catch (final IOException exception) {
