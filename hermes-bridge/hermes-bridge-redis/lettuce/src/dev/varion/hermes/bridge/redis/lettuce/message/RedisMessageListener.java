@@ -1,4 +1,4 @@
-package dev.varion.hermes.message;
+package dev.varion.hermes.bridge.redis.lettuce.message;
 
 import dev.varion.hermes.HermesListener;
 import io.lettuce.core.pubsub.RedisPubSubListener;

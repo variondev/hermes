@@ -1,8 +1,10 @@
-package dev.varion.hermes.keyvalue;
+package dev.varion.hermes.bridge.redis.lettuce.keyvalue;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
-import dev.varion.hermes.message.codec.RedisBinaryCodec;
+import dev.varion.hermes.bridge.redis.lettuce.message.codec.RedisBinaryCodec;
+import dev.varion.hermes.keyvalue.KeyValueException;
+import dev.varion.hermes.keyvalue.KeyValueStorage;
 import io.lettuce.core.RedisClient;
 import io.lettuce.core.api.StatefulRedisConnection;
 
@@ -23,7 +25,7 @@ public final class RedisKeyValueStorage implements KeyValueStorage {
   }
 
   @Override
-  public boolean put(final String key, final String value) throws KeyValueException {
+  public boolean set(final String key, final String value) throws KeyValueException {
     try {
       connection.sync().set(key, value.getBytes(UTF_8));
       return true;
@@ -33,7 +35,7 @@ public final class RedisKeyValueStorage implements KeyValueStorage {
   }
 
   @Override
-  public String get(final String key) throws KeyValueException {
+  public String retrieve(final String key) throws KeyValueException {
     try {
       final byte[] entry = connection.sync().get(key);
       if (entry != null) {
@@ -46,7 +48,7 @@ public final class RedisKeyValueStorage implements KeyValueStorage {
   }
 
   @Override
-  public boolean delete(final String key) throws KeyValueException {
+  public boolean remove(final String key) throws KeyValueException {
     try {
       connection.sync().del(key);
       return true;

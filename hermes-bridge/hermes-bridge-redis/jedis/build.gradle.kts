@@ -6,9 +6,9 @@ plugins {
 
 dependencies {
     api(project(":hermes-common"))
-    api("io.lettuce:lettuce-core:6.4.0.RELEASE")
+    api(project(":hermes-bridge:hermes-bridge-redis:api"))
 }
 
 hermesPublish {
-    artifactId = "hermes-platform-nats"
+    artifactId = "hermes-bridge-redis-jedis"
 }

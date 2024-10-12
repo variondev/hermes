@@ -6,7 +6,7 @@ plugins {
 
 dependencies {
     api(project(":hermes-common"))
-    api("io.nats:jnats:2.20.2")
+    compileOnlyApi("io.nats:jnats:2.20.2")
 }
 
 hermesPublish {

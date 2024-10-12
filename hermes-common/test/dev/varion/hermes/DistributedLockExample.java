@@ -1,8 +1,8 @@
 package dev.varion.hermes;
 
+import dev.varion.hermes.bridge.redis.lettuce.keyvalue.RedisKeyValueStorage;
+import dev.varion.hermes.bridge.redis.lettuce.message.RedisMessageBroker;
 import dev.varion.hermes.distributed.DistributedLock;
-import dev.varion.hermes.keyvalue.RedisKeyValueStorage;
-import dev.varion.hermes.message.RedisMessageBroker;
 import dev.varion.hermes.message.codec.MessagePackCodec;
 import io.lettuce.core.RedisClient;
 import java.util.concurrent.TimeUnit;

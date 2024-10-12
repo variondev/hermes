@@ -4,8 +4,8 @@ import static java.lang.Thread.sleep;
 
 import dev.shiza.dew.subscription.Subscribe;
 import dev.shiza.dew.subscription.Subscriber;
+import dev.varion.hermes.bridge.redis.lettuce.message.RedisMessageBroker;
 import dev.varion.hermes.message.Message;
-import dev.varion.hermes.message.RedisMessageBroker;
 import dev.varion.hermes.message.codec.MessagePackCodec;
 import io.lettuce.core.RedisClient;
 

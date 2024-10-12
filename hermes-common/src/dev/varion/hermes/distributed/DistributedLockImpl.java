@@ -23,15 +23,15 @@ final class DistributedLockImpl implements DistributedLock {
       final long expiresAt = now + ttl;
       final DistributedLockContext lockContext = new DistributedLockContextImpl(pid, expiresAt);
 
-      if (kvStorage.put(key, lockContext.toString())) {
+      if (kvStorage.set(key, lockContext.toString())) {
         return true;
       }
 
-      final String existingValue = kvStorage.get(key);
+      final String existingValue = kvStorage.retrieve(key);
       if (existingValue != null) {
         final DistributedLockContext existingContext = DistributedLockContext.parse(existingValue);
         if (existingContext.expiresAt() < now) {
-          kvStorage.put(key, lockContext.toString());
+          kvStorage.set(key, lockContext.toString());
           return true;
         }
       }
@@ -44,11 +44,11 @@ final class DistributedLockImpl implements DistributedLock {
   @Override
   public boolean unlock() throws DistributedLockException {
     try {
-      final String existingValue = kvStorage.get(key);
+      final String existingValue = kvStorage.retrieve(key);
       if (existingValue != null) {
         final DistributedLockContext existingContext = DistributedLockContext.parse(existingValue);
         if (existingContext.owner().equals(pid)) {
-          kvStorage.delete(key);
+          kvStorage.remove(key);
           return true;
         }
       }

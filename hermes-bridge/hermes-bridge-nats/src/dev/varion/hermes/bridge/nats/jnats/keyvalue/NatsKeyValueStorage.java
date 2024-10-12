@@ -1,7 +1,9 @@
-package dev.varion.hermes.keyvalue;
+package dev.varion.hermes.bridge.nats.jnats.keyvalue;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
+import dev.varion.hermes.keyvalue.KeyValueException;
+import dev.varion.hermes.keyvalue.KeyValueStorage;
 import io.nats.client.KeyValue;
 import io.nats.client.api.KeyValueEntry;
 
@@ -17,7 +19,7 @@ public final class NatsKeyValueStorage implements KeyValueStorage {
   }
 
   @Override
-  public boolean put(final String key, final String value) throws KeyValueException {
+  public boolean set(final String key, final String value) throws KeyValueException {
     try {
       kvStore.put(key, value.getBytes(UTF_8));
       return true;
@@ -27,7 +29,7 @@ public final class NatsKeyValueStorage implements KeyValueStorage {
   }
 
   @Override
-  public String get(final String key) throws KeyValueException {
+  public String retrieve(final String key) throws KeyValueException {
     try {
       final KeyValueEntry entry = kvStore.get(key);
       if (entry != null) {
@@ -40,7 +42,7 @@ public final class NatsKeyValueStorage implements KeyValueStorage {
   }
 
   @Override
-  public boolean delete(final String key) throws KeyValueException {
+  public boolean remove(final String key) throws KeyValueException {
     try {
       kvStore.delete(key);
       return true;

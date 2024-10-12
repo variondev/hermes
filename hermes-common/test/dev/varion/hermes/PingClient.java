@@ -1,6 +1,6 @@
 package dev.varion.hermes;
 
-import dev.varion.hermes.message.RedisMessageBroker;
+import dev.varion.hermes.bridge.redis.lettuce.message.RedisMessageBroker;
 import dev.varion.hermes.message.codec.MessagePackCodec;
 import io.lettuce.core.RedisClient;
 

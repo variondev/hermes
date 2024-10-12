@@ -1,4 +1,4 @@
-package dev.varion.hermes.message.codec;
+package dev.varion.hermes.bridge.redis.lettuce.message.codec;
 
 import static java.nio.ByteBuffer.wrap;
 import static java.nio.charset.StandardCharsets.UTF_8;
