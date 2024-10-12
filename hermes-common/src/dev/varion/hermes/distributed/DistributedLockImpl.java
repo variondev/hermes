@@ -15,16 +15,13 @@ import java.util.concurrent.CompletableFuture;
 
 final class DistributedLockImpl implements DistributedLock {
 
-  private static final int MAX_RETRIES = 5;
   private final String key;
   private final KeyValueStorage kvStorage;
   private final String pid;
-  private final int maxRetries;
 
   DistributedLockImpl(final String key, final KeyValueStorage kvStorage) {
     this.key = key;
     this.kvStorage = kvStorage;
-    maxRetries = MAX_RETRIES;
     pid = UUID.randomUUID().toString();
   }
 
@@ -34,24 +31,19 @@ final class DistributedLockImpl implements DistributedLock {
       final long now = Instant.now().toEpochMilli();
       final long expiresAt = now + ttl;
       final DistributedLockContext lockContext = new DistributedLockContextImpl(pid, expiresAt);
-      return trySetLock(now, lockContext);
+      final String existingValue = kvStorage.retrieve(key);
+      if (existingValue != null) {
+        final DistributedLockContext existingContext = DistributedLockContext.parse(existingValue);
+        if (existingContext.expiresAt() < now) {
+          kvStorage.set(key, lockContext.toString());
+          return true;
+        }
+        return false; // Lock is still valid and held by someone else
+      }
+      return kvStorage.set(key, lockContext.toString());
     } catch (final KeyValueException exception) {
       throw new DistributedLockException("Failed to acquire lock", exception);
     }
-  }
-
-  private boolean trySetLock(final long now, final DistributedLockContext lockContext)
-      throws KeyValueException {
-    final String existingValue = kvStorage.retrieve(key);
-    if (existingValue != null) {
-      final DistributedLockContext existingContext = DistributedLockContext.parse(existingValue);
-      if (existingContext.expiresAt() < now) {
-        kvStorage.set(key, lockContext.toString());
-        return true;
-      }
-      return false; // Lock is still valid and held by someone else
-    }
-    return kvStorage.set(key, lockContext.toString());
   }
 
   @Override
@@ -74,7 +66,7 @@ final class DistributedLockImpl implements DistributedLock {
   @Override
   public CompletableFuture<Void> execute(
       final Runnable task, final Duration delay, final Duration until) {
-    return execute(task, 0, delay, until, Duration.ZERO);
+    return execute(task, 0, delay, until, Duration.ZERO, Instant.now().plus(until));
   }
 
   private CompletableFuture<Void> execute(
@@ -82,8 +74,9 @@ final class DistributedLockImpl implements DistributedLock {
       final int retryCount,
       final Duration delay,
       final Duration until,
-      final Duration backoffDelay) {
-    if (retryCount >= maxRetries) {
+      final Duration backoffDelay,
+      final Instant untilTime) {
+    if (Instant.now().isAfter(untilTime)) {
       throw new RetryingException(retryCount);
     }
     return exceptionallyCompose(
@@ -103,7 +96,8 @@ final class DistributedLockImpl implements DistributedLock {
                     retryCount + 1,
                     delay,
                     until,
-                    backoffDelay.plus(calculateBackoffDelay(delay, until, retryCount + 1))))
+                    backoffDelay.plus(calculateBackoffDelay(delay, until, retryCount + 1)),
+                    untilTime))
         .toCompletableFuture();
   }
 
