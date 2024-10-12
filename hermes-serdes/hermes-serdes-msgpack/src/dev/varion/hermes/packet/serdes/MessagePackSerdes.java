@@ -1,7 +1,7 @@
 package dev.varion.hermes.packet.serdes;
 
-import static dev.varion.hermes.packet.serdes.MessagePackUtils.newPacketOf;
-import static dev.varion.hermes.packet.serdes.MessagePackUtils.readPacketType;
+import static dev.varion.hermes.packet.serdes.MessagePackUtils.instantiatePacket;
+import static dev.varion.hermes.packet.serdes.MessagePackUtils.resolvePacketType;
 
 import dev.varion.hermes.packet.Packet;
 import java.util.Arrays;
@@ -11,24 +11,25 @@ import org.msgpack.core.MessageUnpacker;
 
 public final class MessagePackSerdes implements PacketSerdes {
 
-  private final MessagePackPackingProvider packingProvider;
+  private final MessagePackContext messagePackContext;
 
-  MessagePackSerdes(final MessagePackPackingProvider packingProvider) {
-    this.packingProvider = packingProvider;
+  MessagePackSerdes(final MessagePackContext messagePackContext) {
+    this.messagePackContext = messagePackContext;
   }
 
-  public static MessagePackSerdes create(final MessagePackPackingProvider packingProvider) {
-    return new MessagePackSerdes(packingProvider);
+  public static MessagePackSerdes create(final MessagePackContext messagePackContext) {
+    return new MessagePackSerdes(messagePackContext);
   }
 
   public static MessagePackSerdes create() {
-    return create(MessagePackPackingProvider.create());
+    return create(MessagePackContext.create());
   }
 
   @Override
   public Packet deserialize(final byte[] serializedData) throws PacketSerdesException {
-    try (final MessageUnpacker unpacker = packingProvider.newPacketUnpacker(serializedData)) {
-      final MessagePackPacket packet = newPacketOf(readPacketType(unpacker.unpackString()));
+    try (final MessageUnpacker unpacker = messagePackContext.newPacketUnpacker(serializedData)) {
+      final MessagePackPacket packet =
+          instantiatePacket(resolvePacketType(unpacker.unpackString()));
       packet.setUniqueId(new UUID(unpacker.unpackLong(), unpacker.unpackLong()));
       packet.read(unpacker);
       return packet;
@@ -44,7 +45,7 @@ public final class MessagePackSerdes implements PacketSerdes {
   public byte[] serialize(final Packet packet) throws PacketSerdesException {
     try {
       final MessagePackPacket messagePackPacket = (MessagePackPacket) packet;
-      try (final MessageBufferPacker packer = packingProvider.newPacketPacker()) {
+      try (final MessageBufferPacker packer = messagePackContext.newPacketPacker()) {
         packer.packString(packet.getClass().getName());
         final UUID uniqueId = packet.getUniqueId();
         packer.packLong(uniqueId.getMostSignificantBits());

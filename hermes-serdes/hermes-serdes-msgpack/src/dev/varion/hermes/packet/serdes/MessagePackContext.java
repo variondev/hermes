@@ -6,12 +6,12 @@ import static org.msgpack.core.MessagePack.newDefaultUnpacker;
 import org.msgpack.core.MessageBufferPacker;
 import org.msgpack.core.MessageUnpacker;
 
-public class MessagePackPackingProvider {
+public class MessagePackContext {
 
-  protected MessagePackPackingProvider() {}
+  protected MessagePackContext() {}
 
-  public static MessagePackPackingProvider create() {
-    return new MessagePackPackingProvider();
+  public static MessagePackContext create() {
+    return new MessagePackContext();
   }
 
   public MessageBufferPacker newPacketPacker() {

@@ -6,7 +6,7 @@ final class MessagePackUtils {
 
   private MessagePackUtils() {}
 
-  static <T extends MessagePackPacket> Class<T> readPacketType(final String className)
+  static <T extends MessagePackPacket> Class<T> resolvePacketType(final String className)
       throws MalformedPacketException {
     try {
       // noinspection unchecked
@@ -18,7 +18,7 @@ final class MessagePackUtils {
     }
   }
 
-  static <T extends MessagePackPacket> T newPacketOf(final Class<T> packetType)
+  static <T extends MessagePackPacket> T instantiatePacket(final Class<T> packetType)
       throws MalformedPacketException {
     try {
       return packetType.getDeclaredConstructor().newInstance();
