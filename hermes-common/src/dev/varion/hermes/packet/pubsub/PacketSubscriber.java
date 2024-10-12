@@ -19,5 +19,5 @@ public interface PacketSubscriber {
         eventBus, messageBroker, packetPublisher, packetCallbackFacade, packetSerdes);
   }
 
-  void subscribe(Subscriber subscriber);
+  void subscribe(Subscriber subscriber) throws PacketSubscribingException;
 }

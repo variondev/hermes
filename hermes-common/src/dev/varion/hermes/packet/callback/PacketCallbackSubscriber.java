@@ -30,9 +30,14 @@ public final class PacketCallbackSubscriber implements HermesListener {
         .findByUniqueId(uniqueId)
         .ifPresent(
             future -> {
-              //noinspection unchecked
-              ((CompletableFuture<Packet>) future).complete(packet);
-              packetCallbackFacade.remove(uniqueId);
+              try {
+                //noinspection unchecked
+                ((CompletableFuture<Packet>) future).complete(packet);
+                packetCallbackFacade.remove(uniqueId);
+              } catch (final Exception exception) {
+                throw new PacketCompleteException(
+                    "Failed to complete packet identified by %s".formatted(uniqueId), exception);
+              }
             });
   }
 }

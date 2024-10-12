@@ -2,7 +2,6 @@ package dev.varion.hermes.packet.callback.requester;
 
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
-import dev.shiza.dew.event.EventPublishingException;
 import dev.varion.hermes.message.MessageBroker;
 import dev.varion.hermes.packet.Packet;
 import dev.varion.hermes.packet.callback.PacketCallbackFacade;
@@ -39,7 +38,7 @@ final class PacketCallbackRequesterImpl implements PacketCallbackRequester {
       packetCallbackFacade.add(uniqueId, completableFuture);
       return completableFuture.orTimeout(requestCleanupInterval.toMillis(), MILLISECONDS);
     } catch (final Exception exception) {
-      throw new EventPublishingException(
+      throw new PacketRequestingException(
           "Could not request packet over the message broker, because of unexpected exception.",
           exception);
     }

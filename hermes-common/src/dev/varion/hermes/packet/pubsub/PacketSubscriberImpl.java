@@ -5,7 +5,6 @@ import static java.util.Arrays.stream;
 import dev.shiza.dew.event.EventBus;
 import dev.shiza.dew.subscription.Subscribe;
 import dev.shiza.dew.subscription.Subscriber;
-import dev.shiza.dew.subscription.SubscribingException;
 import dev.varion.hermes.message.MessageBroker;
 import dev.varion.hermes.packet.Packet;
 import dev.varion.hermes.packet.callback.PacketCallbackFacade;
@@ -39,10 +38,10 @@ final class PacketSubscriberImpl implements PacketSubscriber {
   }
 
   @Override
-  public void subscribe(final Subscriber subscriber) {
+  public void subscribe(final Subscriber subscriber) throws PacketSubscribingException {
     final String identity = subscriber.identity();
     if (identity == null || identity.isEmpty()) {
-      throw new SubscribingException("Subscriber's identity cannot be null or empty");
+      throw new PacketSubscribingException("Subscriber's identity cannot be null or empty");
     }
 
     eventBus.subscribe(subscriber);
@@ -54,7 +53,7 @@ final class PacketSubscriberImpl implements PacketSubscriber {
       }
 
       if (method.getParameterCount() == 0) {
-        throw new SubscribingException(
+        throw new PacketSubscribingException(
             "Subscriber's method %s parameter count is zero".formatted(method.getName()));
       }
 

@@ -1,6 +1,5 @@
 package dev.varion.hermes.packet.pubsub;
 
-import dev.shiza.dew.event.EventPublishingException;
 import dev.varion.hermes.message.MessageBroker;
 import dev.varion.hermes.packet.Packet;
 import dev.varion.hermes.packet.serdes.PacketSerdes;
@@ -21,7 +20,7 @@ final class PacketPublisherImpl implements PacketPublisher {
       final byte[] payload = packetSerdes.serialize(packet);
       messageBroker.publish(channelName, payload);
     } catch (final Exception exception) {
-      throw new EventPublishingException(
+      throw new PacketPublishingException(
           "Could not publish packet over the message broker, because of unexpected exception.",
           exception);
     }
