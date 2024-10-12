@@ -42,16 +42,16 @@ public final class HermesConfigurator {
     }
 
     final KeyValueStorage keyValueStorage = configurator.keyValue().get();
-    final DistributedLockConfig distributedLocks = configurator.distributedLock();
-    if (keyValueStorage == null
-        && (distributedLocks.shouldInitializeDistributedLocks()
-            || distributedLocks.get() != null)) {
+    final boolean shouldInitializeDistributedLocks =
+        configurator.distributedLock().shouldInitializeDistributedLocks();
+    final DistributedLocks distributedLocks = configurator.distributedLock().get();
+    if (keyValueStorage == null && (shouldInitializeDistributedLocks || distributedLocks != null)) {
       throw new HermesException(
           "Key value storage is required when distributed locks are provided.");
     }
 
-    if (distributedLocks.shouldInitializeDistributedLocks() && distributedLocks.get() == null) {
-      distributedLocks.using(DistributedLocks.create(keyValueStorage));
+    if (shouldInitializeDistributedLocks && distributedLocks == null) {
+      configurator.distributedLock().using(DistributedLocks.create(keyValueStorage));
     }
 
     final MessagePublisher messagePublisher = MessagePublisher.create(messageBroker, messageCodec);
@@ -59,7 +59,7 @@ public final class HermesConfigurator {
     return new HermesImpl(
         messageBroker,
         keyValueStorage,
-        distributedLocks.get(),
+        distributedLocks,
         messagePublisher,
         MessageCallbackRequester.create(
             messageBroker,
