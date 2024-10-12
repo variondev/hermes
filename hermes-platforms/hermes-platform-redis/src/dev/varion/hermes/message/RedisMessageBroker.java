@@ -1,7 +1,7 @@
 package dev.varion.hermes.message;
 
 import dev.varion.hermes.HermesListener;
-import dev.varion.hermes.RedisBinaryCodec;
+import dev.varion.hermes.message.codec.RedisBinaryCodec;
 import io.lettuce.core.RedisClient;
 import io.lettuce.core.RedisURI;
 import io.lettuce.core.api.StatefulRedisConnection;

@@ -3,14 +3,14 @@ package dev.varion.hermes;
 import static java.time.Duration.ofSeconds;
 
 import dev.shiza.dew.event.EventBus;
-import dev.varion.hermes.kv.KeyValueStorage;
-import dev.varion.hermes.locks.DistributedLocks;
+import dev.varion.hermes.distributed.DistributedLocks;
+import dev.varion.hermes.keyvalue.KeyValueStorage;
 import dev.varion.hermes.message.MessageBroker;
-import dev.varion.hermes.packet.callback.PacketCallbackFacade;
-import dev.varion.hermes.packet.callback.requester.PacketCallbackRequester;
-import dev.varion.hermes.packet.pubsub.PacketPublisher;
-import dev.varion.hermes.packet.pubsub.PacketSubscriber;
-import dev.varion.hermes.packet.serdes.PacketSerdes;
+import dev.varion.hermes.message.callback.MessageCallbackFacade;
+import dev.varion.hermes.message.callback.requester.MessageCallbackRequester;
+import dev.varion.hermes.message.codec.MessageCodec;
+import dev.varion.hermes.message.pubsub.MessagePublisher;
+import dev.varion.hermes.message.pubsub.MessageSubscriber;
 import java.time.Duration;
 
 public final class HermesBuilder {
@@ -18,7 +18,7 @@ public final class HermesBuilder {
   private MessageBroker messageBroker;
   private KeyValueStorage keyValueStorage;
   private DistributedLocks distributedLocks;
-  private PacketSerdes packetSerdes;
+  private MessageCodec messageCodec;
   private EventBus eventBus = EventBus.create().publisher(Runnable::run);
   private Duration requestCleanupInterval = ofSeconds(10L);
   private boolean shouldInitializeDistributedLocks;
@@ -45,8 +45,8 @@ public final class HermesBuilder {
     return this;
   }
 
-  public HermesBuilder withPacketSerdes(final PacketSerdes packetSerdes) {
-    this.packetSerdes = packetSerdes;
+  public HermesBuilder withPacketSerdes(final MessageCodec messageCodec) {
+    this.messageCodec = messageCodec;
     return this;
   }
 
@@ -64,8 +64,8 @@ public final class HermesBuilder {
     if (messageBroker == null) {
       throw new HermesException("Message broker is missing while building Hermes.");
     }
-    if (packetSerdes == null) {
-      throw new HermesException("Packet serdes is missing while building Hermes.");
+    if (messageCodec == null) {
+      throw new HermesException("Message codec is missing while building Hermes.");
     }
     if (keyValueStorage == null && (shouldInitializeDistributedLocks || distributedLocks != null)) {
       throw new HermesException(
@@ -76,20 +76,20 @@ public final class HermesBuilder {
       distributedLocks = DistributedLocks.create(keyValueStorage);
     }
 
-    final PacketCallbackFacade packetCallbackFacade = PacketCallbackFacade.create();
-    final PacketPublisher packetPublisher = PacketPublisher.create(messageBroker, packetSerdes);
-    final PacketCallbackRequester packetCallbackRequester =
-        PacketCallbackRequester.create(
-            messageBroker, packetSerdes, packetCallbackFacade, requestCleanupInterval);
-    final PacketSubscriber packetSubscriber =
-        PacketSubscriber.create(
-            eventBus, messageBroker, packetPublisher, packetCallbackFacade, packetSerdes);
+    final MessageCallbackFacade messageCallbackFacade = MessageCallbackFacade.create();
+    final MessagePublisher messagePublisher = MessagePublisher.create(messageBroker, messageCodec);
+    final MessageCallbackRequester messageCallbackRequester =
+        MessageCallbackRequester.create(
+            messageBroker, messageCodec, messageCallbackFacade, requestCleanupInterval);
+    final MessageSubscriber messageSubscriber =
+        MessageSubscriber.create(
+            eventBus, messageBroker, messagePublisher, messageCallbackFacade, messageCodec);
     return new HermesImpl(
         messageBroker,
         keyValueStorage,
         distributedLocks,
-        packetPublisher,
-        packetCallbackRequester,
-        packetSubscriber);
+        messagePublisher,
+        messageCallbackRequester,
+        messageSubscriber);
   }
 }
