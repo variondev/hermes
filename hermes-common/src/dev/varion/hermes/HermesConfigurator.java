@@ -44,14 +44,14 @@ public final class HermesConfigurator {
     final KeyValueStorage keyValueStorage = configurator.keyValue().get();
     final boolean shouldInitializeDistributedLocks =
         configurator.distributedLock().shouldInitializeDistributedLocks();
-    final DistributedLocks distributedLocks = configurator.distributedLock().get();
+    DistributedLocks distributedLocks = configurator.distributedLock().get();
     if (keyValueStorage == null && (shouldInitializeDistributedLocks || distributedLocks != null)) {
       throw new HermesException(
           "Key value storage is required when distributed locks are provided.");
     }
 
     if (shouldInitializeDistributedLocks && distributedLocks == null) {
-      configurator.distributedLock().using(DistributedLocks.create(keyValueStorage));
+      distributedLocks = DistributedLocks.create(keyValueStorage);
     }
 
     final MessagePublisher messagePublisher = MessagePublisher.create(messageBroker, messageCodec);
