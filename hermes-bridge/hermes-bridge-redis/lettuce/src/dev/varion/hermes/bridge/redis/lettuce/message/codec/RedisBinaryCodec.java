@@ -8,29 +8,29 @@ import java.nio.ByteBuffer;
 
 public final class RedisBinaryCodec implements RedisCodec<String, byte[]> {
 
-    public static final RedisBinaryCodec INSTANCE = new RedisBinaryCodec();
+  public static final RedisBinaryCodec INSTANCE = new RedisBinaryCodec();
 
-    RedisBinaryCodec() {}
+  RedisBinaryCodec() {}
 
-    @Override
-    public String decodeKey(final ByteBuffer buffer) {
-        return UTF_8.decode(buffer).toString();
-    }
+  @Override
+  public String decodeKey(final ByteBuffer buffer) {
+    return UTF_8.decode(buffer).toString();
+  }
 
-    @Override
-    public byte[] decodeValue(final ByteBuffer buffer) {
-        final byte[] bytes = new byte[buffer.remaining()];
-        buffer.get(bytes);
-        return bytes;
-    }
+  @Override
+  public byte[] decodeValue(final ByteBuffer buffer) {
+    final byte[] bytes = new byte[buffer.remaining()];
+    buffer.get(bytes);
+    return bytes;
+  }
 
-    @Override
-    public ByteBuffer encodeKey(final String value) {
-        return wrap(value.getBytes(UTF_8));
-    }
+  @Override
+  public ByteBuffer encodeKey(final String value) {
+    return wrap(value.getBytes(UTF_8));
+  }
 
-    @Override
-    public ByteBuffer encodeValue(final byte[] value) {
-        return wrap(value);
-    }
+  @Override
+  public ByteBuffer encodeValue(final byte[] value) {
+    return wrap(value);
+  }
 }

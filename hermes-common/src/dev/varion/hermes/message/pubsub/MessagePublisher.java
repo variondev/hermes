@@ -8,9 +8,10 @@ import dev.varion.hermes.message.codec.MessageCodec;
 @FunctionalInterface
 public interface MessagePublisher {
 
-    static MessagePublisher create(final MessageBroker messageBroker, final MessageCodec messageCodec) {
-        return new MessagePublisherImpl(messageBroker, messageCodec);
-    }
+  static MessagePublisher create(
+      final MessageBroker messageBroker, final MessageCodec messageCodec) {
+    return new MessagePublisherImpl(messageBroker, messageCodec);
+  }
 
-    <T extends Message> void publish(String channelName, T packet) throws EventPublishingException;
+  <T extends Message> void publish(String channelName, T packet) throws EventPublishingException;
 }
