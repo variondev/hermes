@@ -16,11 +16,14 @@ public final class PongServer {
   @SuppressWarnings({"BusyWait", "InfiniteLoopStatement"})
   public static void main(final String[] args) {
     try (final Hermes hermes =
-        Hermes.newBuilder()
-            .withMessageBroker(
-                RedisMessageBroker.create(RedisClient.create("redis://localhost:6379")))
-            .withPacketSerdes(MessagePackCodec.create())
-            .build()) {
+        HermesConfigurator.configure(
+            configurator -> {
+              configurator.messageBroker(
+                  config ->
+                      config.using(
+                          RedisMessageBroker.create(RedisClient.create("redis://localhost:6379"))));
+              configurator.messageCodec(config -> config.using(MessagePackCodec.create()));
+            })) {
 
       hermes.subscribe(new PongListener());
 
@@ -46,7 +49,7 @@ public final class PongServer {
 
     @Subscribe
     public void receive(final PeerMessage packet) {
-      System.out.printf("Received peer packet: %s%n", packet.getContent());
+      System.out.printf("Received peer message: %s%n", packet.getContent());
     }
 
     @Override

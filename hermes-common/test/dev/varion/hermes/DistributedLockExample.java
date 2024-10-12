@@ -14,14 +14,17 @@ public final class DistributedLockExample {
   public static void main(final String[] args) {
     final RedisClient redisClient = RedisClient.create("redis://localhost:6379");
     try (final Hermes hermes =
-        Hermes.newBuilder()
-            .withMessageBroker(RedisMessageBroker.create(redisClient))
-            .withPacketSerdes(MessagePackCodec.create())
-            .withKeyValueStorage(RedisKeyValueStorage.create(redisClient))
-            .withDistributedLocks(true)
-            .build()) {
+        HermesConfigurator.configure(
+            configurator -> {
+              configurator.messageBroker(
+                  config -> config.using(RedisMessageBroker.create(redisClient)));
+              configurator.messageCodec(config -> config.using(MessagePackCodec.create()));
+              configurator.keyValue(
+                  config -> config.using(RedisKeyValueStorage.create(redisClient)));
+              configurator.distributedLock(config -> config.using(true));
+            })) {
 
-      final DistributedLock lock = hermes.locks().createLock("my_resource");
+      final DistributedLock lock = hermes.distributedLocks().createLock("my_resource");
 
       if (lock.lock(TimeUnit.SECONDS.toMillis(5L))) {
         System.out.println("Lock acquired!");

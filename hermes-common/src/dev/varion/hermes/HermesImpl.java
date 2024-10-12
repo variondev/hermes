@@ -52,7 +52,7 @@ final class HermesImpl implements Hermes {
   }
 
   @Override
-  public KeyValueStorage kv() throws MissingServiceException {
+  public KeyValueStorage keyValue() throws MissingServiceException {
     if (keyValueStorage == null) {
       throw new MissingServiceException("Key value storage has not been provided.");
     }
@@ -60,7 +60,7 @@ final class HermesImpl implements Hermes {
   }
 
   @Override
-  public DistributedLocks locks() throws MissingServiceException {
+  public DistributedLocks distributedLocks() throws MissingServiceException {
     if (distributedLocks == null) {
       throw new MissingServiceException("Distributed locks have not been provided.");
     }

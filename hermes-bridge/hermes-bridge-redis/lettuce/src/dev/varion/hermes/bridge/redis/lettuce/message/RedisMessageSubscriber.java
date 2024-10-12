@@ -3,12 +3,12 @@ package dev.varion.hermes.bridge.redis.lettuce.message;
 import dev.varion.hermes.HermesListener;
 import io.lettuce.core.pubsub.RedisPubSubListener;
 
-final class RedisMessageListener implements RedisPubSubListener<String, byte[]> {
+final class RedisMessageSubscriber implements RedisPubSubListener<String, byte[]> {
 
   private final String subscribedTopic;
   private final HermesListener listener;
 
-  RedisMessageListener(final String subscribedTopic, final HermesListener listener) {
+  RedisMessageSubscriber(final String subscribedTopic, final HermesListener listener) {
     this.subscribedTopic = subscribedTopic;
     this.listener = listener;
   }
