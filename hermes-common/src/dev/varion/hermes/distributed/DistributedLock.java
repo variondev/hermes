@@ -4,4 +4,6 @@ public interface DistributedLock {
   boolean lock(long ttl) throws DistributedLockException;
 
   boolean unlock() throws DistributedLockException;
+
+  boolean renew(long additionalTtl) throws DistributedLockException;
 }
