@@ -27,9 +27,9 @@ public interface Hermes extends Closeable {
 
   <T extends Packet> CompletableFuture<T> request(String channelName, Packet request);
 
-  KeyValueStorage kv();
+  KeyValueStorage kv() throws MissingServiceException;
 
-  DistributedLocks locks();
+  DistributedLocks locks() throws MissingServiceException;
 
   final class HermesBuilder {
 
