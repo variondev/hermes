@@ -28,15 +28,6 @@ final class DistributedLockImpl implements DistributedLock {
     pid = UUID.randomUUID().toString();
   }
 
-  private static Duration calculateBackoffDelay(
-      final Duration delay, final Duration until, final int retryCount) {
-    final long exponentialDelayMillis =
-        min(delay.toMillis() * (1L << retryCount), until.toMillis());
-    final long randomPart =
-        exponentialDelayMillis / 2 + current().nextInt((int) (exponentialDelayMillis / 2));
-    return ofMillis(randomPart);
-  }
-
   @Override
   public boolean acquire(final long ttl) throws DistributedLockException {
     try {
@@ -114,5 +105,14 @@ final class DistributedLockImpl implements DistributedLock {
                     until,
                     backoffDelay.plus(calculateBackoffDelay(delay, until, retryCount + 1))))
         .toCompletableFuture();
+  }
+
+  private Duration calculateBackoffDelay(
+      final Duration delay, final Duration until, final int retryCount) {
+    final long exponentialDelayMillis =
+        min(delay.toMillis() * (1L << retryCount), until.toMillis());
+    final long randomPart =
+        exponentialDelayMillis / 2 + current().nextInt((int) (exponentialDelayMillis / 2));
+    return ofMillis(randomPart);
   }
 }
