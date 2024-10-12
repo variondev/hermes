@@ -14,11 +14,11 @@ public class MessagePackContext {
     return new MessagePackContext();
   }
 
-  public MessageBufferPacker newPacketPacker() {
+  public MessageBufferPacker createMessageBufferPacker() {
     return newDefaultBufferPacker();
   }
 
-  public MessageUnpacker newPacketUnpacker(final byte[] content) {
-    return newDefaultUnpacker(content);
+  public MessageUnpacker createMessageUnpacker(final byte[] serializedData) {
+    return newDefaultUnpacker(serializedData);
   }
 }

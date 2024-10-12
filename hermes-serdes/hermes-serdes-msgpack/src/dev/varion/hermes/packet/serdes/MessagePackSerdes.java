@@ -27,7 +27,8 @@ public final class MessagePackSerdes implements PacketSerdes {
 
   @Override
   public Packet deserialize(final byte[] serializedData) throws PacketSerdesException {
-    try (final MessageUnpacker unpacker = messagePackContext.newPacketUnpacker(serializedData)) {
+    try (final MessageUnpacker unpacker =
+        messagePackContext.createMessageUnpacker(serializedData)) {
       final MessagePackPacket packet =
           instantiatePacket(resolvePacketType(unpacker.unpackString()));
       packet.setUniqueId(new UUID(unpacker.unpackLong(), unpacker.unpackLong()));
@@ -45,7 +46,7 @@ public final class MessagePackSerdes implements PacketSerdes {
   public byte[] serialize(final Packet packet) throws PacketSerdesException {
     try {
       final MessagePackPacket messagePackPacket = (MessagePackPacket) packet;
-      try (final MessageBufferPacker packer = messagePackContext.newPacketPacker()) {
+      try (final MessageBufferPacker packer = messagePackContext.createMessageBufferPacker()) {
         packer.packString(packet.getClass().getName());
         final UUID uniqueId = packet.getUniqueId();
         packer.packLong(uniqueId.getMostSignificantBits());
