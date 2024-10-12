@@ -12,14 +12,14 @@ public final class DistributedLockExample {
   private DistributedLockExample() {}
 
   public static void main(final String[] args) {
-    try (final RedisClient redisClient = RedisClient.create();
-        final Hermes hermes =
-            Hermes.newBuilder()
-                .withMessageBroker(RedisMessageBroker.create(redisClient))
-                .withPacketSerdes(JacksonPacketSerdes.create())
-                .withKeyValueStorage(RedisKeyValueStorage.create(redisClient))
-                .withDistributedLocks(true)
-                .build()) {
+    final RedisClient redisClient = RedisClient.create("redis://localhost:6379");
+    try (final Hermes hermes =
+        Hermes.newBuilder()
+            .withMessageBroker(RedisMessageBroker.create(redisClient))
+            .withPacketSerdes(JacksonPacketSerdes.create())
+            .withKeyValueStorage(RedisKeyValueStorage.create(redisClient))
+            .withDistributedLocks(true)
+            .build()) {
 
       final DistributedLock lock = hermes.locks().createLock("my_resource");
 
