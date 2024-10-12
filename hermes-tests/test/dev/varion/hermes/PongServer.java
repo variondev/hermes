@@ -6,7 +6,7 @@ import dev.shiza.dew.subscription.Subscribe;
 import dev.shiza.dew.subscription.Subscriber;
 import dev.varion.hermes.message.RedisMessageBroker;
 import dev.varion.hermes.packet.Packet;
-import dev.varion.hermes.packet.serdes.jackson.JacksonPacketSerdes;
+import dev.varion.hermes.packet.serdes.MessagePackSerdes;
 import io.lettuce.core.RedisClient;
 
 public final class PongServer {
@@ -17,8 +17,9 @@ public final class PongServer {
   public static void main(final String[] args) {
     try (final Hermes hermes =
         Hermes.newBuilder()
-            .withMessageBroker(RedisMessageBroker.create(RedisClient.create()))
-            .withPacketSerdes(JacksonPacketSerdes.create())
+            .withMessageBroker(
+                RedisMessageBroker.create(RedisClient.create("redis://localhost:6379")))
+            .withPacketSerdes(MessagePackSerdes.create())
             .build()) {
 
       hermes.subscribe(new PongListener());
@@ -40,7 +41,7 @@ public final class PongServer {
       // if response cannot be sent it's also
       // fine you can return null
       final PongPacket response = new PongPacket(request.getMessage() + " Pong!");
-      return response.sendTo(request.getUniqueId());
+      return response.dispatchTo(request.getUniqueId());
     }
 
     @Subscribe

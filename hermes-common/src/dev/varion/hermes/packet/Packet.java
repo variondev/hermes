@@ -22,7 +22,11 @@ public abstract class Packet implements Event {
     return uniqueId;
   }
 
-  public Packet sendTo(final UUID uniqueId) {
+  public void setUniqueId(final UUID uniqueId) {
+    this.uniqueId = uniqueId;
+  }
+
+  public Packet dispatchTo(final UUID uniqueId) {
     this.uniqueId = uniqueId;
     return this;
   }

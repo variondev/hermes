@@ -1,4 +1,4 @@
-package dev.varion.hermes.packet.serdes.jackson;
+package dev.varion.hermes.packet.serdes;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import dev.varion.hermes.packet.Packet;

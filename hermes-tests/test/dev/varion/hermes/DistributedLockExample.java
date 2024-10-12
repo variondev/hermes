@@ -3,7 +3,7 @@ package dev.varion.hermes;
 import dev.varion.hermes.kv.RedisKeyValueStorage;
 import dev.varion.hermes.locks.DistributedLock;
 import dev.varion.hermes.message.RedisMessageBroker;
-import dev.varion.hermes.packet.serdes.jackson.JacksonPacketSerdes;
+import dev.varion.hermes.packet.serdes.MessagePackSerdes;
 import io.lettuce.core.RedisClient;
 import java.util.concurrent.TimeUnit;
 
@@ -16,7 +16,7 @@ public final class DistributedLockExample {
     try (final Hermes hermes =
         Hermes.newBuilder()
             .withMessageBroker(RedisMessageBroker.create(redisClient))
-            .withPacketSerdes(JacksonPacketSerdes.create())
+            .withPacketSerdes(MessagePackSerdes.create())
             .withKeyValueStorage(RedisKeyValueStorage.create(redisClient))
             .withDistributedLocks(true)
             .build()) {

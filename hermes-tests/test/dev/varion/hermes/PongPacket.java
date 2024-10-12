@@ -1,10 +1,11 @@
 package dev.varion.hermes;
 
-import dev.varion.hermes.packet.serdes.jackson.JacksonPacket;
+import dev.varion.hermes.packet.serdes.MessagePackPacket;
+import org.msgpack.core.MessageBufferPacker;
+import org.msgpack.core.MessageUnpacker;
 
-public class PongPacket extends JacksonPacket {
+public class PongPacket extends MessagePackPacket {
 
-  // This can be any type which implements Serializable
   private String message;
 
   public PongPacket() {}
@@ -15,5 +16,15 @@ public class PongPacket extends JacksonPacket {
 
   public String getMessage() {
     return message;
+  }
+
+  @Override
+  public void write(final MessageBufferPacker packer) throws Exception {
+    packer.packString(message);
+  }
+
+  @Override
+  public void read(final MessageUnpacker unpacker) throws Exception {
+    message = unpacker.unpackString();
   }
 }

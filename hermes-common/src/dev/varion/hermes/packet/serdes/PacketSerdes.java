@@ -4,7 +4,7 @@ import dev.varion.hermes.packet.Packet;
 
 public interface PacketSerdes {
 
-  Packet deserialize(byte[] data) throws PacketSerdesException;
+  Packet deserialize(byte[] serializedData) throws PacketSerdesException;
 
   byte[] serialize(Packet packet) throws PacketSerdesException;
 }

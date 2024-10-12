@@ -1,34 +1,25 @@
-package dev.varion.hermes.packet.serdes.jackson;
+package dev.varion.hermes.packet.serdes;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.introspect.VisibilityChecker;
 import com.fasterxml.jackson.databind.json.JsonMapper;
-import dev.varion.hermes.packet.Packet;
-import dev.varion.hermes.packet.serdes.PacketSerdes;
-import dev.varion.hermes.packet.serdes.PacketSerdesException;
-import java.io.IOException;
 
-public final class JacksonPacketSerdes implements PacketSerdes {
+public final class JacksonPacketSerdesFactory {
 
-  private final ObjectMapper mapper;
+  private JacksonPacketSerdesFactory() {}
 
-  public JacksonPacketSerdes(final ObjectMapper mapper) {
-    this.mapper = mapper;
-  }
-
-  public static PacketSerdes create(final ObjectMapper objectMapper) {
+  public static PacketSerdes getJacksonPacketSerdes(final ObjectMapper objectMapper) {
     return new JacksonPacketSerdes(objectMapper);
   }
 
-  public static PacketSerdes create() {
-    return new JacksonPacketSerdes(
+  public static PacketSerdes getJacksonPacketSerdes() {
+    return getJacksonPacketSerdes(
         JsonMapper.builder()
             .enable(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY)
             .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
@@ -42,23 +33,5 @@ public final class JacksonPacketSerdes implements PacketSerdes {
                     .withGetterVisibility(JsonAutoDetect.Visibility.NONE)
                     .withSetterVisibility(JsonAutoDetect.Visibility.NONE)
                     .withCreatorVisibility(JsonAutoDetect.Visibility.NONE)));
-  }
-
-  @Override
-  public Packet deserialize(final byte[] data) throws PacketSerdesException {
-    try {
-      return mapper.readValue(data, JacksonPacket.class);
-    } catch (final IOException exception) {
-      throw new PacketSerdesException("Could not deserialize packet", exception);
-    }
-  }
-
-  @Override
-  public byte[] serialize(final Packet packet) throws PacketSerdesException {
-    try {
-      return mapper.writeValueAsBytes(packet);
-    } catch (final JsonProcessingException exception) {
-      throw new PacketSerdesException("Could not serialize packet", exception);
-    }
   }
 }

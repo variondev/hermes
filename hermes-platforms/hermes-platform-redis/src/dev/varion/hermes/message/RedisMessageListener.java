@@ -1,7 +1,6 @@
 package dev.varion.hermes.message;
 
 import dev.varion.hermes.HermesListener;
-import dev.varion.hermes.packet.serdes.PacketSerdesException;
 import io.lettuce.core.pubsub.RedisPubSubListener;
 
 final class RedisMessageListener implements RedisPubSubListener<String, byte[]> {
@@ -18,13 +17,7 @@ final class RedisMessageListener implements RedisPubSubListener<String, byte[]> 
   public void message(final String channelName, final byte[] message) {
     final boolean whetherIsSubscribedTopic = subscribedTopic.equals(channelName);
     if (whetherIsSubscribedTopic) {
-      try {
-        listener.receive(channelName, message);
-      } catch (final Exception exception) {
-        throw new PacketSerdesException(
-            "Could not process process incoming message, because of unexpected exception.",
-            exception);
-      }
+      listener.receive(channelName, message);
     }
   }
 

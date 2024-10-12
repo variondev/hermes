@@ -1,19 +1,19 @@
 package dev.varion.hermes;
 
 import dev.varion.hermes.message.RedisMessageBroker;
-import dev.varion.hermes.packet.serdes.jackson.JacksonPacketSerdes;
+import dev.varion.hermes.packet.serdes.MessagePackSerdes;
 import io.lettuce.core.RedisClient;
-import java.io.IOException;
 
 public final class PingClient {
 
   private PingClient() {}
 
-  public static void main(final String[] args) throws IOException, InterruptedException {
+  public static void main(final String[] args) {
     try (final Hermes hermes =
         Hermes.newBuilder()
-            .withMessageBroker(RedisMessageBroker.create(RedisClient.create()))
-            .withPacketSerdes(JacksonPacketSerdes.create())
+            .withMessageBroker(
+                RedisMessageBroker.create(RedisClient.create("redis://localhost:6379")))
+            .withPacketSerdes(MessagePackSerdes.create())
             .build()) {
       hermes
           .<PongPacket>request("tests", new PingPacket("Ping!"))
