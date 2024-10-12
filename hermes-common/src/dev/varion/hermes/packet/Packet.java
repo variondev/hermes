@@ -22,8 +22,9 @@ public abstract class Packet implements Event {
     return uniqueId;
   }
 
-  public void setUniqueId(final UUID uniqueId) {
+  public Packet sendTo(final UUID uniqueId) {
     this.uniqueId = uniqueId;
+    return this;
   }
 
   @Override

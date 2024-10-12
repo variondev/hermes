@@ -1,4 +1,4 @@
-package dev.varion.hermes.packet;
+package dev.varion.hermes.packet.pubsub;
 
 import static java.util.Arrays.stream;
 
@@ -7,6 +7,7 @@ import dev.shiza.dew.subscription.Subscribe;
 import dev.shiza.dew.subscription.Subscriber;
 import dev.shiza.dew.subscription.SubscribingException;
 import dev.varion.hermes.message.MessageBroker;
+import dev.varion.hermes.packet.Packet;
 import dev.varion.hermes.packet.callback.PacketCallbackFacade;
 import dev.varion.hermes.packet.callback.PacketCallbackSubscriber;
 import dev.varion.hermes.packet.serdes.PacketSerdes;

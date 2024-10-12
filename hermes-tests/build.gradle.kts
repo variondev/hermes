@@ -6,5 +6,5 @@ plugins {
 dependencies {
     testImplementation(project(":hermes-common"))
     testImplementation(project(":hermes-serdes:hermes-serdes-jackson"))
-    testImplementation(project(":hermes-platforms:hermes-platform-nats"))
+    testImplementation(project(":hermes-platforms:hermes-platform-redis"))
 }

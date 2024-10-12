@@ -1,31 +1,35 @@
 package dev.varion.hermes.message;
 
 import dev.varion.hermes.HermesListener;
+import dev.varion.hermes.RedisBinaryCodec;
 import io.lettuce.core.RedisClient;
 import io.lettuce.core.RedisURI;
 import io.lettuce.core.api.StatefulRedisConnection;
-import io.lettuce.core.codec.RedisCodec;
 import io.lettuce.core.pubsub.StatefulRedisPubSubConnection;
 import java.util.HashSet;
 import java.util.Set;
 
 public final class RedisMessageBroker implements MessageBroker {
 
-  private static final RedisCodec<String, byte[]> DEFAULT_CODEC = new RedisBinaryCodec();
   private final RedisClient redisClient;
   private final StatefulRedisConnection<String, byte[]> connection;
   private final StatefulRedisPubSubConnection<String, byte[]> pubSubConnection;
   private final Set<String> subscribedTopics;
 
-  RedisMessageBroker(final RedisURI redisUri) {
-    redisClient = RedisClient.create(redisUri);
-    connection = redisClient.connect(DEFAULT_CODEC);
-    pubSubConnection = redisClient.connectPubSub(DEFAULT_CODEC);
+  RedisMessageBroker(final RedisClient redisClient) {
+    this.redisClient = redisClient;
+    final RedisBinaryCodec codec = RedisBinaryCodec.INSTANCE;
+    connection = redisClient.connect(codec);
+    pubSubConnection = redisClient.connectPubSub(codec);
     subscribedTopics = new HashSet<>();
   }
 
+  public static MessageBroker create(final RedisClient redisClient) {
+    return new RedisMessageBroker(redisClient);
+  }
+
   public static MessageBroker create(final RedisURI redisUri) {
-    return new RedisMessageBroker(redisUri);
+    return create(RedisClient.create(redisUri));
   }
 
   @Override

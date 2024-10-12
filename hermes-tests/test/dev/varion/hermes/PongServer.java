@@ -4,41 +4,43 @@ import static java.lang.Thread.sleep;
 
 import dev.shiza.dew.subscription.Subscribe;
 import dev.shiza.dew.subscription.Subscriber;
-import dev.varion.hermes.message.NatsMessageBroker;
+import dev.varion.hermes.message.RedisMessageBroker;
+import dev.varion.hermes.packet.Packet;
 import dev.varion.hermes.packet.serdes.jackson.JacksonPacketSerdes;
-import io.nats.client.Nats;
-import java.io.IOException;
+import io.lettuce.core.RedisClient;
 
 public final class PongServer {
 
   private PongServer() {}
 
   @SuppressWarnings({"BusyWait", "InfiniteLoopStatement"})
-  public static void main(final String[] args) throws IOException, InterruptedException {
-    final Hermes hermes =
+  public static void main(final String[] args) {
+    try (final Hermes hermes =
         Hermes.newBuilder()
-            .withMessageBroker(NatsMessageBroker.create(Nats.connect()))
+            .withMessageBroker(RedisMessageBroker.create(RedisClient.create()))
             .withPacketSerdes(JacksonPacketSerdes.create())
-            .build();
+            .build()) {
 
-    hermes.subscribe(new PongListener());
+      hermes.subscribe(new PongListener());
 
-    // keep-alive
-    while (true) {
-      sleep(1000);
+      // keep-alive
+      while (true) {
+        sleep(1000);
+      }
+    } catch (final Exception exception) {
+      exception.printStackTrace();
     }
   }
 
   public static final class PongListener implements Subscriber {
 
     @Subscribe
-    public PongPacket receive(final PingPacket request) {
+    public Packet receive(final PingPacket request) {
       // method can be a void, no need to return any packets,
       // if response cannot be sent it's also
       // fine you can return null
       final PongPacket response = new PongPacket(request.getMessage() + " Pong!");
-      response.setUniqueId(request.getUniqueId());
-      return response;
+      return response.sendTo(request.getUniqueId());
     }
 
     @Subscribe

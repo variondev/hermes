@@ -1,8 +1,8 @@
-package dev.varion.hermes.packet;
-
+package dev.varion.hermes.packet.pubsub;
 
 import dev.shiza.dew.event.EventPublishingException;
 import dev.varion.hermes.message.MessageBroker;
+import dev.varion.hermes.packet.Packet;
 import dev.varion.hermes.packet.serdes.PacketSerdes;
 
 final class PacketPublisherImpl implements PacketPublisher {

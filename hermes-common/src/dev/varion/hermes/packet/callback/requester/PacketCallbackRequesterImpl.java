@@ -1,23 +1,24 @@
-package dev.varion.hermes.packet;
+package dev.varion.hermes.packet.callback.requester;
 
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
 import dev.shiza.dew.event.EventPublishingException;
 import dev.varion.hermes.message.MessageBroker;
+import dev.varion.hermes.packet.Packet;
 import dev.varion.hermes.packet.callback.PacketCallbackFacade;
 import dev.varion.hermes.packet.serdes.PacketSerdes;
 import java.time.Duration;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
-final class PacketRequesterImpl implements PacketRequester {
+final class PacketCallbackRequesterImpl implements PacketCallbackRequester {
 
   private final MessageBroker messageBroker;
   private final PacketSerdes packetSerdes;
   private final PacketCallbackFacade packetCallbackFacade;
   private final Duration requestCleanupInterval;
 
-  PacketRequesterImpl(
+  PacketCallbackRequesterImpl(
       final MessageBroker messageBroker,
       final PacketSerdes packetSerdes,
       final PacketCallbackFacade packetCallbackFacade,

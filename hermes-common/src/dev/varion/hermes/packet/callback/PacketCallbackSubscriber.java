@@ -1,6 +1,5 @@
 package dev.varion.hermes.packet.callback;
 
-
 import dev.varion.hermes.HermesListener;
 import dev.varion.hermes.packet.Packet;
 import dev.varion.hermes.packet.serdes.PacketSerdes;

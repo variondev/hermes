@@ -1,4 +1,4 @@
-package dev.varion.hermes.packet;
+package dev.varion.hermes.packet.pubsub;
 
 import dev.shiza.dew.event.EventBus;
 import dev.shiza.dew.subscription.Subscriber;

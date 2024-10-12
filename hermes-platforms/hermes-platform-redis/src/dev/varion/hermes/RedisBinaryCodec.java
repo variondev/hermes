@@ -1,4 +1,4 @@
-package dev.varion.hermes.message;
+package dev.varion.hermes;
 
 import static java.nio.ByteBuffer.wrap;
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -6,7 +6,11 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import io.lettuce.core.codec.RedisCodec;
 import java.nio.ByteBuffer;
 
-final class RedisBinaryCodec implements RedisCodec<String, byte[]> {
+public final class RedisBinaryCodec implements RedisCodec<String, byte[]> {
+
+  public static final RedisBinaryCodec INSTANCE = new RedisBinaryCodec();
+
+  RedisBinaryCodec() {}
 
   @Override
   public String decodeKey(final ByteBuffer buffer) {

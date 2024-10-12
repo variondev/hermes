@@ -1,30 +1,37 @@
 package dev.varion.hermes;
 
-
 import dev.shiza.dew.subscription.Subscriber;
+import dev.varion.hermes.kv.KeyValueStorage;
+import dev.varion.hermes.locks.DistributedLocks;
 import dev.varion.hermes.message.MessageBroker;
 import dev.varion.hermes.packet.Packet;
-import dev.varion.hermes.packet.PacketPublisher;
-import dev.varion.hermes.packet.PacketRequester;
-import dev.varion.hermes.packet.PacketSubscriber;
+import dev.varion.hermes.packet.callback.requester.PacketCallbackRequester;
+import dev.varion.hermes.packet.pubsub.PacketPublisher;
+import dev.varion.hermes.packet.pubsub.PacketSubscriber;
 import java.io.IOException;
 import java.util.concurrent.CompletableFuture;
 
 final class HermesImpl implements Hermes {
 
   private final MessageBroker messageBroker;
+  private final KeyValueStorage keyValueStorage;
+  private final DistributedLocks distributedLocks;
   private final PacketPublisher packetPublisher;
-  private final PacketRequester packetRequester;
+  private final PacketCallbackRequester packetCallbackRequester;
   private final PacketSubscriber packetSubscriber;
 
   HermesImpl(
       final MessageBroker messageBroker,
+      final KeyValueStorage keyValueStorage,
+      final DistributedLocks distributedLocks,
       final PacketPublisher packetPublisher,
-      final PacketRequester packetRequester,
+      final PacketCallbackRequester packetCallbackRequester,
       final PacketSubscriber packetSubscriber) {
     this.messageBroker = messageBroker;
+    this.keyValueStorage = keyValueStorage;
+    this.distributedLocks = distributedLocks;
     this.packetPublisher = packetPublisher;
-    this.packetRequester = packetRequester;
+    this.packetCallbackRequester = packetCallbackRequester;
     this.packetSubscriber = packetSubscriber;
   }
 
@@ -41,7 +48,23 @@ final class HermesImpl implements Hermes {
   @Override
   public <T extends Packet> CompletableFuture<T> request(
       final String channelName, final Packet request) {
-    return packetRequester.request(channelName, request);
+    return packetCallbackRequester.request(channelName, request);
+  }
+
+  @Override
+  public KeyValueStorage kv() {
+    if (keyValueStorage == null) {
+      throw new HermesException("Key value storage has not been provided.");
+    }
+    return keyValueStorage;
+  }
+
+  @Override
+  public DistributedLocks locks() {
+    if (distributedLocks == null) {
+      throw new HermesException("Distributed locks have not been provided.");
+    }
+    return distributedLocks;
   }
 
   @Override

@@ -1,8 +1,8 @@
 package dev.varion.hermes;
 
-import dev.varion.hermes.message.NatsMessageBroker;
+import dev.varion.hermes.message.RedisMessageBroker;
 import dev.varion.hermes.packet.serdes.jackson.JacksonPacketSerdes;
-import io.nats.client.Nats;
+import io.lettuce.core.RedisClient;
 import java.io.IOException;
 
 public final class PingClient {
@@ -10,20 +10,22 @@ public final class PingClient {
   private PingClient() {}
 
   public static void main(final String[] args) throws IOException, InterruptedException {
-    final Hermes hermes =
+    try (final Hermes hermes =
         Hermes.newBuilder()
-            .withMessageBroker(NatsMessageBroker.create(Nats.connect()))
+            .withMessageBroker(RedisMessageBroker.create(RedisClient.create()))
             .withPacketSerdes(JacksonPacketSerdes.create())
-            .build();
+            .build()) {
+      hermes
+          .<PongPacket>request("tests", new PingPacket("Ping!"))
+          .thenAccept(
+              packet ->
+                  System.out.printf(
+                      "Received: %s -> %s%n", packet.getUniqueId(), packet.getMessage()))
+          .join();
 
-    hermes
-        .<PongPacket>request("tests", new PingPacket("Ping!"))
-        .thenAccept(
-            packet ->
-                System.out.printf(
-                    "Received: %s -> %s%n", packet.getUniqueId(), packet.getMessage()))
-        .join();
-
-    hermes.publish("tests", new PeerPacket("Hello from client!"));
+      hermes.publish("tests", new PeerPacket("Hello from client!"));
+    } catch (final Exception exception) {
+      exception.printStackTrace();
+    }
   }
 }

@@ -1,7 +1,6 @@
 package dev.varion.hermes.message;
 
 import dev.varion.hermes.HermesListener;
-import dev.varion.hermes.packet.serdes.PacketSerdes;
 import io.nats.client.Connection;
 import io.nats.client.Nats;
 import io.nats.client.Options;
@@ -18,8 +17,7 @@ public final class NatsMessageBroker implements MessageBroker {
     return new NatsMessageBroker(connection);
   }
 
-  public static MessageBroker create(final Options options, final PacketSerdes packetSerdes)
-      throws MessageBrokerException {
+  public static MessageBroker create(final Options options) throws MessageBrokerException {
     try {
       return create(Nats.connect(options));
     } catch (final Exception exception) {
