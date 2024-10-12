@@ -6,13 +6,13 @@ import java.util.concurrent.CompletableFuture;
 
 public interface MessageCallbackFacade {
 
-  static MessageCallbackFacade create() {
-    return new MessageCallbackService();
-  }
+    static MessageCallbackFacade create() {
+        return new MessageCallbackService();
+    }
 
-  void add(UUID uniqueId, CompletableFuture<?> responseFuture);
+    void add(UUID uniqueId, CompletableFuture<?> responseFuture);
 
-  void remove(UUID uniqueId);
+    void remove(UUID uniqueId);
 
-  Optional<CompletableFuture<?>> findByUniqueId(UUID uniqueId);
+    Optional<CompletableFuture<?>> findByUniqueId(UUID uniqueId);
 }

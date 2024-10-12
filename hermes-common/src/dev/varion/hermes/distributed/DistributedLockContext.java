@@ -4,14 +4,14 @@ import static java.lang.Long.parseLong;
 
 public interface DistributedLockContext {
 
-  static DistributedLockContext parse(final String value) {
-    final String[] parts = value.split(":");
-    return new DistributedLockContextImpl(parts[0], parseLong(parts[1]));
-  }
+    static DistributedLockContext parse(final String value) {
+        final String[] parts = value.split(":");
+        return new DistributedLockContextImpl(parts[0], parseLong(parts[1]));
+    }
 
-  String owner();
+    String owner();
 
-  long expiresAt();
+    long expiresAt();
 
-  String toString();
+    String toString();
 }

@@ -2,13 +2,13 @@ package dev.varion.hermes.message;
 
 public final class MessageBrokerConfig {
 
-  private MessageBroker messageBroker;
+    private MessageBroker messageBroker;
 
-  public MessageBroker get() {
-    return messageBroker;
-  }
+    public MessageBroker get() {
+        return messageBroker;
+    }
 
-  public void using(final MessageBroker messageBroker) {
-    this.messageBroker = messageBroker;
-  }
+    public void using(final MessageBroker messageBroker) {
+        this.messageBroker = messageBroker;
+    }
 }

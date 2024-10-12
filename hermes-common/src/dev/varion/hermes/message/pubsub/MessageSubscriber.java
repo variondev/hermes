@@ -9,15 +9,15 @@ import dev.varion.hermes.message.codec.MessageCodec;
 @FunctionalInterface
 public interface MessageSubscriber {
 
-  static MessageSubscriber create(
-      final EventBus eventBus,
-      final MessageBroker messageBroker,
-      final MessagePublisher messagePublisher,
-      final MessageCallbackFacade messageCallbackFacade,
-      final MessageCodec messageCodec) {
-    return new MessageSubscriberImpl(
-        eventBus, messageBroker, messagePublisher, messageCallbackFacade, messageCodec);
-  }
+    static MessageSubscriber create(
+            final EventBus eventBus,
+            final MessageBroker messageBroker,
+            final MessagePublisher messagePublisher,
+            final MessageCallbackFacade messageCallbackFacade,
+            final MessageCodec messageCodec) {
+        return new MessageSubscriberImpl(
+                eventBus, messageBroker, messagePublisher, messageCallbackFacade, messageCodec);
+    }
 
-  void subscribe(Subscriber subscriber) throws MessageSubscribingException;
+    void subscribe(Subscriber subscriber) throws MessageSubscribingException;
 }

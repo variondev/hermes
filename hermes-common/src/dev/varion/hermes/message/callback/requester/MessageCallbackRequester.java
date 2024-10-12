@@ -9,14 +9,14 @@ import java.util.concurrent.CompletableFuture;
 
 public interface MessageCallbackRequester {
 
-  static MessageCallbackRequester create(
-      final MessageBroker messageBroker,
-      final MessageCodec messageCodec,
-      final MessageCallbackFacade messageCallbackFacade,
-      final Duration requestCleanupInterval) {
-    return new MessageCallbackRequesterImpl(
-        messageBroker, messageCodec, messageCallbackFacade, requestCleanupInterval);
-  }
+    static MessageCallbackRequester create(
+            final MessageBroker messageBroker,
+            final MessageCodec messageCodec,
+            final MessageCallbackFacade messageCallbackFacade,
+            final Duration requestCleanupInterval) {
+        return new MessageCallbackRequesterImpl(
+                messageBroker, messageCodec, messageCallbackFacade, requestCleanupInterval);
+    }
 
-  <T extends Message> CompletableFuture<T> request(String channelName, Message request);
+    <T extends Message> CompletableFuture<T> request(String channelName, Message request);
 }

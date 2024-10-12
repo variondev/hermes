@@ -27,7 +27,7 @@ fun RepositoryHandler.maven(
     url: String,
     username: String,
     password: String,
-    snapshots: Boolean = true
+    snapshots: Boolean = true,
 ) {
     val isSnapshot = version.toString().endsWith("-SNAPSHOT")
     if (isSnapshot && !snapshots) {

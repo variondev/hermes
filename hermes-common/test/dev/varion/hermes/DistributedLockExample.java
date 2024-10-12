@@ -9,32 +9,27 @@ import java.util.concurrent.TimeUnit;
 
 public final class DistributedLockExample {
 
-  private DistributedLockExample() {}
+    private DistributedLockExample() {}
 
-  public static void main(final String[] args) {
-    final RedisClient redisClient = RedisClient.create("redis://localhost:6379");
-    try (final Hermes hermes =
-        HermesConfigurator.configure(
-            configurator -> {
-              configurator.messageBroker(
-                  config -> config.using(RedisMessageBroker.create(redisClient)));
-              configurator.messageCodec(config -> config.using(MessagePackCodec.create()));
-              configurator.keyValue(
-                  config -> config.using(RedisKeyValueStorage.create(redisClient)));
-              configurator.distributedLock(config -> config.using(true));
-            })) {
+    public static void main(final String[] args) {
+        final RedisClient redisClient = RedisClient.create("redis://localhost:6379");
+        try (final Hermes hermes = HermesConfigurator.configure(configurator -> configurator
+                .messageBroker(config -> config.using(RedisMessageBroker.create(redisClient)))
+                .messageCodec(config -> config.using(MessagePackCodec.create()))
+                .keyValue(config -> config.using(RedisKeyValueStorage.create(redisClient)))
+                .distributedLock(config -> config.using(true)))) {
 
-      final DistributedLock lock = hermes.distributedLocks().createLock("my_resource");
+            final DistributedLock lock = hermes.distributedLocks().createLock("my_resource");
 
-      if (lock.lock(TimeUnit.SECONDS.toMillis(5L))) {
-        System.out.println("Lock acquired!");
+            if (lock.lock(TimeUnit.SECONDS.toMillis(5L))) {
+                System.out.println("Lock acquired!");
 
-        lock.unlock();
-      } else {
-        System.out.println("Failed to acquire lock.");
-      }
-    } catch (final Exception exception) {
-      exception.printStackTrace();
+                lock.unlock();
+            } else {
+                System.out.println("Failed to acquire lock.");
+            }
+        } catch (final Exception exception) {
+            exception.printStackTrace();
+        }
     }
-  }
 }
