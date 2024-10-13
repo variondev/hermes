@@ -1,9 +1,7 @@
-package dev.varion.hermes.bridge.nats.jnats.keyvalue;
+package dev.varion.hermes.keyvalue;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
-import dev.varion.hermes.keyvalue.KeyValueException;
-import dev.varion.hermes.keyvalue.KeyValueStorage;
 import io.nats.client.KeyValue;
 import io.nats.client.api.KeyValueEntry;
 

@@ -4,9 +4,9 @@ import static java.lang.System.exit;
 import static java.time.Duration.ofMillis;
 import static java.time.Duration.ofSeconds;
 
-import dev.varion.hermes.bridge.nats.jnats.keyvalue.NatsKeyValueStorage;
-import dev.varion.hermes.bridge.nats.jnats.message.NatsMessageBroker;
 import dev.varion.hermes.distributed.DistributedLock;
+import dev.varion.hermes.keyvalue.NatsKeyValueStorage;
+import dev.varion.hermes.message.NatsMessageBroker;
 import dev.varion.hermes.message.codec.MessagePackCodec;
 import io.nats.client.Connection;
 import io.nats.client.Nats;

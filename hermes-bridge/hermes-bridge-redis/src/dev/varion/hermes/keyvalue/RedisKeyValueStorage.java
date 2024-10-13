@@ -1,10 +1,8 @@
-package dev.varion.hermes.bridge.redis.lettuce.keyvalue;
+package dev.varion.hermes.keyvalue;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
-import dev.varion.hermes.bridge.redis.lettuce.message.codec.RedisBinaryCodec;
-import dev.varion.hermes.keyvalue.KeyValueException;
-import dev.varion.hermes.keyvalue.KeyValueStorage;
+import dev.varion.hermes.message.codec.RedisBinaryCodec;
 import io.lettuce.core.RedisClient;
 import io.lettuce.core.api.StatefulRedisConnection;
 

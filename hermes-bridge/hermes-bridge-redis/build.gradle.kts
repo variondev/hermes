@@ -10,5 +10,5 @@ dependencies {
 }
 
 hermesPublish {
-    artifactId = "hermes-bridge-redis-lettuce"
+    artifactId = "hermes-bridge-redis"
 }

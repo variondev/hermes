@@ -1,8 +1,6 @@
-package dev.varion.hermes.bridge.nats.jnats.message;
+package dev.varion.hermes.message;
 
 import dev.varion.hermes.HermesListener;
-import dev.varion.hermes.message.MessageBroker;
-import dev.varion.hermes.message.MessageBrokerException;
 import io.nats.client.Connection;
 import io.nats.client.Nats;
 import io.nats.client.Options;
