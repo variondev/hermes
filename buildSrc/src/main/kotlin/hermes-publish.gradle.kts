@@ -27,13 +27,8 @@ fun RepositoryHandler.maven(
     url: String,
     username: String,
     password: String,
-    snapshots: Boolean = true,
 ) {
     val isSnapshot = version.toString().endsWith("-SNAPSHOT")
-    if (isSnapshot && !snapshots) {
-        return
-    }
-
     this.maven {
         this.name = if (isSnapshot) "${name}Snapshots" else "${name}Releases"
         this.url = if (isSnapshot) uri("$url/snapshots") else uri("$url/releases")
