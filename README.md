@@ -1,30 +1,43 @@
 # Hermes
 
-Hermes is a flexible and scalable messaging library that makes transmitting binary data a breeze. It
-works seamlessly with popular message brokers, so you can integrate it into your project with ease.
+Welcome to **Hermes**, the easy-to-use, flexible, and scalable messaging library designed to make sending binary data effortless. Whether you're working with popular message brokers or building a custom solution, Hermes has you covered.
 
-## Getting Started
+## Let's Get Started!
 
 ### 1. Add the Repository
 
-To get started with Hermes, add the following repository to your project:
+To kick things off, add the Hermes repository to your project:
 
 ```kotlin
 maven("https://repo.varion.dev/snapshots")
 ```
 
-### 2. Add the Dependency
+### 2. Add the Hermes Dependency
 
-Next, include the Hermes library in your project by adding this dependency:
+Next, bring Hermes into your project by adding this dependency:
 
 ```kotlin
 implementation("dev.varion:<module>:1.0-SNAPSHOT")
 ```
 
-## Additional Resources
+And that’s it! You’re ready to start building with Hermes.
 
-Hermes is built on top amazing libraries, like [Dew](https://github.com/rchomczyk-playground/dew)
-by **Rafał Chomczyk**.
+## Learn More
 
-Feel free to explore and contribute to the project!
+Hermes is built on awesome libraries like [Dew](https://github.com/rchomczyk-playground/dew), crafted by **Rafał Chomczyk**. Feel free to explore it further or even contribute!
 
+## Troubleshooting
+
+If you see an error like this:
+
+`> Could not find dev.shiza:dew:1.1.2.`
+
+No worries! Just add this repository:
+
+```kotlin
+maven("https://repo.shiza.dev/releases")
+```
+
+---
+
+You're all set! Happy coding with Hermes 🚀
