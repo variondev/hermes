@@ -6,7 +6,7 @@ plugins {
 
 dependencies {
     api(project(":hermes-common"))
-    api(project(":hermes-bridge:hermes-bridge-redis:api"))
+    compileOnlyApi("org.redisson:redisson:3.37.0")
 }
 
 hermesPublish {

@@ -6,7 +6,7 @@ plugins {
 
 dependencies {
     api(project(":hermes-common"))
-    api(project(":hermes-bridge:hermes-bridge-redis:api"))
+    compileOnlyApi("redis.clients:jedis:5.2.0")
 }
 
 hermesPublish {

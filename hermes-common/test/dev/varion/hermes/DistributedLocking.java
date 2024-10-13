@@ -4,11 +4,14 @@ import static java.lang.System.exit;
 import static java.time.Duration.ofMillis;
 import static java.time.Duration.ofSeconds;
 
-import dev.varion.hermes.bridge.redis.lettuce.keyvalue.RedisKeyValueStorage;
-import dev.varion.hermes.bridge.redis.lettuce.message.RedisMessageBroker;
+import dev.varion.hermes.bridge.nats.jnats.keyvalue.NatsKeyValueStorage;
+import dev.varion.hermes.bridge.nats.jnats.message.NatsMessageBroker;
 import dev.varion.hermes.distributed.DistributedLock;
 import dev.varion.hermes.message.codec.MessagePackCodec;
-import io.lettuce.core.RedisClient;
+import io.nats.client.Connection;
+import io.nats.client.Nats;
+import io.nats.client.api.KeyValueConfiguration;
+import io.nats.client.api.StorageType;
 import java.io.IOException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -18,15 +21,31 @@ public final class DistributedLocking {
 
   private DistributedLocking() {}
 
-  public static void main(final String[] args) {
-    final RedisClient redisClient = RedisClient.create("redis://localhost:6379");
+  public static void main(final String[] args) throws Exception {
+    final Connection connection = Nats.connect();
+
+    try {
+      final KeyValueConfiguration kvConfig =
+          KeyValueConfiguration.builder().name("my_locks").storageType(StorageType.Memory).build();
+      connection.keyValueManagement().create(kvConfig);
+    } catch (final Exception ignored) {
+    }
+
     final Hermes hermes =
         HermesConfigurator.configure(
             configurator ->
                 configurator
-                    .messageBroker(config -> config.using(RedisMessageBroker.create(redisClient)))
+                    .messageBroker(config -> config.using(NatsMessageBroker.create(connection)))
                     .messageCodec(config -> config.using(MessagePackCodec.create()))
-                    .keyValue(config -> config.using(RedisKeyValueStorage.create(redisClient)))
+                    .keyValue(
+                        config -> {
+                          try {
+                            config.using(
+                                NatsKeyValueStorage.create(connection.keyValue("my_locks")));
+                          } catch (final IOException e) {
+                            throw new RuntimeException(e);
+                          }
+                        })
                     .distributedLock(config -> config.using(true)));
 
     final DistributedLock lock = hermes.distributedLocks().createLock("my_resource");
@@ -48,7 +67,7 @@ public final class DistributedLocking {
                                     }
                                   },
                                   ofMillis(10L),
-                                  ofSeconds(1L))
+                                  ofSeconds(5L))
                               .whenComplete(
                                   (v, t) ->
                                       System.out.println("Thread " + i + " released the lock!"))

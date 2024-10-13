@@ -9,5 +9,5 @@ public interface DistributedLock {
   boolean release() throws DistributedLockException;
 
   CompletableFuture<Void> execute(Runnable task, Duration delay, Duration until)
-      throws DistributedLockException;
+      throws RetryingException, DistributedLockException;
 }

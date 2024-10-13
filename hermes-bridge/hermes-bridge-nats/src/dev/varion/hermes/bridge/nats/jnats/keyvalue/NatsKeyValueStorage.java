@@ -21,11 +21,7 @@ public final class NatsKeyValueStorage implements KeyValueStorage {
   @Override
   public boolean set(final String key, final String value) throws KeyValueException {
     return performSafely(
-        () -> {
-          kvStore.put(key, value.getBytes(UTF_8));
-          return true;
-        },
-        "Failed to put value in NATS KV store");
+        () -> kvStore.put(key, value.getBytes(UTF_8)) > 0, "Failed to put value in NATS KV store");
   }
 
   @Override

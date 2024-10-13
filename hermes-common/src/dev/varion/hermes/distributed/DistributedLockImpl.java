@@ -27,20 +27,20 @@ final class DistributedLockImpl implements DistributedLock {
 
   @Override
   public boolean acquire(final long ttl) throws DistributedLockException {
+    final String lockKey = "lock-" + key;
     try {
       final long now = Instant.now().toEpochMilli();
       final long expiresAt = now + ttl;
       final DistributedLockContext lockContext = new DistributedLockContextImpl(pid, expiresAt);
-      final String existingValue = kvStorage.retrieve(key);
+      final String existingValue = kvStorage.retrieve(lockKey);
       if (existingValue != null) {
         final DistributedLockContext existingContext = DistributedLockContext.parse(existingValue);
         if (existingContext.expiresAt() < now) {
-          kvStorage.set(key, lockContext.toString());
-          return true;
+          return kvStorage.set(lockKey, lockContext.toString());
         }
         return false; // Lock is still valid and held by someone else
       }
-      return kvStorage.set(key, lockContext.toString());
+      return kvStorage.set(lockKey, lockContext.toString());
     } catch (final KeyValueException exception) {
       throw new DistributedLockException("Failed to acquire lock", exception);
     }
@@ -48,12 +48,13 @@ final class DistributedLockImpl implements DistributedLock {
 
   @Override
   public boolean release() throws DistributedLockException {
+    final String lockKey = "lock-" + key;
     try {
-      final String existingValue = kvStorage.retrieve(key);
+      final String existingValue = kvStorage.retrieve(lockKey);
       if (existingValue != null) {
         final DistributedLockContext existingContext = DistributedLockContext.parse(existingValue);
         if (existingContext.owner().equals(pid)) {
-          kvStorage.remove(key);
+          kvStorage.remove(lockKey);
           return true;
         }
       }

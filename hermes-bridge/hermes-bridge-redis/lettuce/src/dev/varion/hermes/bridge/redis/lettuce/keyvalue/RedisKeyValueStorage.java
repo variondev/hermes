@@ -26,34 +26,27 @@ public final class RedisKeyValueStorage implements KeyValueStorage {
 
   @Override
   public boolean set(final String key, final String value) throws KeyValueException {
-    try {
-      connection.sync().set(key, value.getBytes(UTF_8));
-      return true;
-    } catch (final Exception exception) {
-      throw new KeyValueException("Failed to put value in REDIS KV store", exception);
-    }
+    return performSafely(
+        () -> "OK".equals(connection.sync().set(key, value.getBytes(UTF_8))),
+        "Failed to put value in REDIS KV store");
   }
 
   @Override
   public String retrieve(final String key) throws KeyValueException {
-    try {
-      final byte[] entry = connection.sync().get(key);
-      if (entry != null) {
-        return new String(entry, UTF_8);
-      }
-      return null;
-    } catch (final Exception exception) {
-      throw new KeyValueException("Failed to get value from REDIS KV store", exception);
-    }
+    return performSafely(
+        () -> {
+          final byte[] entry = connection.sync().get(key);
+          if (entry != null) {
+            return new String(entry, UTF_8);
+          }
+          return null;
+        },
+        "Failed to get value from REDIS KV store");
   }
 
   @Override
   public boolean remove(final String key) throws KeyValueException {
-    try {
-      connection.sync().del(key);
-      return true;
-    } catch (final Exception exception) {
-      throw new KeyValueException("Failed to delete key from NATS KV store", exception);
-    }
+    return performSafely(
+        () -> connection.sync().del(key) > 0, "Failed to delete key from REDIS KV store");
   }
 }

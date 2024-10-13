@@ -6,7 +6,6 @@ plugins {
 
 dependencies {
     api(project(":hermes-common"))
-    api(project(":hermes-bridge:hermes-bridge-redis:api"))
     compileOnlyApi("io.lettuce:lettuce-core:6.4.0.RELEASE")
 }
 
