@@ -16,5 +16,5 @@ dependencies {
 }
 
 hermesPublish {
-    artifactId = "hermes"
+    artifactId = "hermes-common"
 }

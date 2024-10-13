@@ -18,7 +18,7 @@ maven("https://repo.varion.dev/snapshots")
 Next, include the Hermes library in your project by adding this dependency:
 
 ```kotlin
-implementation("dev.varion:hermes:1.0-SNAPSHOT")
+implementation("dev.varion:<module>:1.0-SNAPSHOT")
 ```
 
 ## Additional Resources
