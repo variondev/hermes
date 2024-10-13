@@ -5,9 +5,10 @@ plugins {
 }
 
 dependencies {
-    subprojects.forEach { implementation(it) }
+    api(project(":hermes-common"))
+    compileOnlyApi("io.lettuce:lettuce-core:6.4.0.RELEASE")
 }
 
 hermesPublish {
-    artifactId = "hermes-bridge-redis"
+    artifactId = "hermes-bridge-redis-lettuce"
 }
