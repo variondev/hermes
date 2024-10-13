@@ -10,7 +10,7 @@ works seamlessly with popular message brokers, so you can integrate it into your
 To get started with Hermes, add the following repository to your project:
 
 ```kotlin
-maven("https://repo.varion.dev/releases")
+maven("https://repo.varion.dev/snapshots")
 ```
 
 ### 2. Add the Dependency
