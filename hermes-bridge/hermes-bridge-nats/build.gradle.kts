@@ -10,5 +10,5 @@ dependencies {
 }
 
 hermesPublish {
-    artifactId = "hermes-platform-nats"
+    artifactId = "hermes-bridge-nats"
 }
