@@ -40,4 +40,7 @@ maven("https://repo.shiza.dev/releases")
 
 ---
 
-You're all set! Happy coding with Hermes 🚀
+<br>
+<p align="center">
+  <img height="100em" src="https://count.getloli.com/get/@:awa?theme=rule33"/>
+</p>
