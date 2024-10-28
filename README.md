@@ -6,6 +6,8 @@ custom solution, Hermes has you covered.
 
 ## Getting Started
 
+repository not hosted yet
+
 ### Add Repository
 
 To kick things off, add the Hermes repository to your project:
