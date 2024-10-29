@@ -6,7 +6,7 @@ plugins {
 
 dependencies {
     api(project(":hermes-common"))
-    api("com.fasterxml.jackson.core:jackson-databind:2.18.0")
+    api("com.fasterxml.jackson.core:jackson-databind:2.18.1")
 }
 
 hermesPublish {
