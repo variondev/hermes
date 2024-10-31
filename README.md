@@ -1,8 +1,6 @@
 # Hermes
 
-Welcome to **Hermes**, the easy-to-use, flexible, and scalable messaging library designed to make
-sending binary data effortless. Whether you're working with popular message brokers or building a
-custom solution, Hermes has you covered.
+**Hermes** is a versatile framework for advanced message handling, providing `publish-subscribe` mechanisms, asynchronous `request-response` capabilities with CompletableFuture, access to `key-value` storage, and `distributed locking`, all with robust exception handling.
 
 ## Getting Started
 
