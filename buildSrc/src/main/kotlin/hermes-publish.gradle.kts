@@ -3,7 +3,7 @@ plugins {
     `maven-publish`
 }
 
-group = "dev.araucaris"
+group = "dev.varion"
 version = "1.0-SNAPSHOT"
 
 java {
@@ -14,8 +14,8 @@ publishing {
     repositories {
         mavenLocal()
         maven(
-            name = "araucaris",
-            url = "https://repo.araucaris.dev",
+            name = "varion",
+            url = "https://repo.varion.dev",
             username = "MAVEN_USERNAME",
             password = "MAVEN_PASSWORD"
         )

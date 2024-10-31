@@ -6,41 +6,33 @@ custom solution, Hermes has you covered.
 
 ## Getting Started
 
-repository not hosted yet
-
 ### Add Repository
 
-To kick things off, add the Hermes repository to your project:
-
 ```kotlin
-maven("https://repo.araucaris.dev/snapshots")
+maven("https://repo.varion.dev/snapshots")
 ```
 
 ### Add Dependencies
 
-Next, add the necessary Hermes dependencies to your project:
-
 **Core:**
 
 ```kotlin
-implementation("dev.araucaris:hermes-common:1.0-SNAPSHOT")
+implementation("dev.varion:hermes-common:1.0-SNAPSHOT")
 ```
 
 **Codec:**
 
 ```kotlin
-implementation("dev.araucaris:hermes-codec-jackson:1.0-SNAPSHOT")
-implementation("dev.araucaris:hermes-codec-msgpack:1.0-SNAPSHOT")
+implementation("dev.varion:hermes-codec-jackson:1.0-SNAPSHOT")
+implementation("dev.varion:hermes-codec-msgpack:1.0-SNAPSHOT")
 ```
 
 **Bridge:**
 
 ```kotlin
-implementation("dev.araucaris:hermes-bridge-nats:1.0-SNAPSHOT")
-implementation("dev.araucaris:hermes-bridge-redis:1.0-SNAPSHOT")
+implementation("dev.varion:hermes-bridge-nats:1.0-SNAPSHOT")
+implementation("dev.varion:hermes-bridge-redis:1.0-SNAPSHOT")
 ```
-
-And that’s it! You’re ready to start crafting with Hermes.
 
 ## Troubleshooting
 
