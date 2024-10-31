@@ -34,18 +34,6 @@ implementation("dev.varion:hermes-bridge-nats:1.0-SNAPSHOT")
 implementation("dev.varion:hermes-bridge-redis:1.0-SNAPSHOT")
 ```
 
-## Troubleshooting
-
-If you encounter an error like:
-
-`> Could not find dev.shiza:dew:1.1.2.`
-
-Just add the following repository:
-
-```kotlin
-maven("https://repo.shiza.dev/releases")
-```
-
 ---
 
 <p align="center">
