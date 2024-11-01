@@ -3,7 +3,7 @@ plugins {
     `maven-publish`
 }
 
-group = "dev.varion"
+group = "dev.varion.hermes"
 version = "1.0-SNAPSHOT"
 
 java {
