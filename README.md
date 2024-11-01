@@ -15,21 +15,21 @@ maven("https://repo.varion.dev/snapshots")
 **Core:**
 
 ```kotlin
-implementation("dev.varion:hermes-common:1.0-SNAPSHOT")
+implementation("dev.varion.hermes:hermes-common:1.0-SNAPSHOT")
 ```
 
 **Codec:**
 
 ```kotlin
-implementation("dev.varion:hermes-codec-jackson:1.0-SNAPSHOT")
-implementation("dev.varion:hermes-codec-msgpack:1.0-SNAPSHOT")
+implementation("dev.varion.hermes:hermes-codec-jackson:1.0-SNAPSHOT")
+implementation("dev.varion.hermes:hermes-codec-msgpack:1.0-SNAPSHOT")
 ```
 
 **Bridge:**
 
 ```kotlin
-implementation("dev.varion:hermes-bridge-nats:1.0-SNAPSHOT")
-implementation("dev.varion:hermes-bridge-redis:1.0-SNAPSHOT")
+implementation("dev.varion.hermes:hermes-bridge-nats:1.0-SNAPSHOT")
+implementation("dev.varion.hermes:hermes-bridge-redis:1.0-SNAPSHOT")
 ```
 
 ---
