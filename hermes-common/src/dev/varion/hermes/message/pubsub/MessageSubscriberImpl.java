@@ -63,7 +63,11 @@ final class MessageSubscriberImpl implements MessageSubscriber {
               stream(method.getParameterTypes())
                   .filter(Message.class::isAssignableFrom)
                   .findAny()
-                  .orElseThrow();
+                  .orElseThrow(
+                      () ->
+                          new NullPointerException(
+                              "No valid message type found under %s#%s"
+                                  .formatted(subscriber.getClass(), method)));
       packetTypes.add(packetType);
     }
 
