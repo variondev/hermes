@@ -3,6 +3,7 @@ package dev.varion.hermes.message.pubsub;
 import dev.varion.hermes.message.Message;
 import dev.varion.hermes.message.MessageBroker;
 import dev.varion.hermes.message.codec.MessageCodec;
+import java.util.concurrent.CompletionStage;
 
 final class MessagePublisherImpl implements MessagePublisher {
 
@@ -15,10 +16,10 @@ final class MessagePublisherImpl implements MessagePublisher {
   }
 
   @Override
-  public <T extends Message> void publish(final String channelName, final T packet) {
+  public <T extends Message> CompletionStage<Long> publish(final String channelName, final T packet) {
     try {
       final byte[] payload = messageCodec.serialize(packet);
-      messageBroker.publish(channelName, payload);
+      return messageBroker.publish(channelName, payload);
     } catch (final Exception exception) {
       throw new MessagePublishingException(
           "Could not publish packet over the message broker, because of unexpected exception.",

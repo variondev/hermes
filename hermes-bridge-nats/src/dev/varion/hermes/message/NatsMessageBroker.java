@@ -1,9 +1,12 @@
 package dev.varion.hermes.message;
 
+import static java.util.concurrent.CompletableFuture.completedFuture;
+
 import dev.varion.hermes.HermesListener;
 import io.nats.client.Connection;
 import io.nats.client.Nats;
 import io.nats.client.Options;
+import java.util.concurrent.CompletionStage;
 
 public final class NatsMessageBroker implements MessageBroker {
 
@@ -28,8 +31,9 @@ public final class NatsMessageBroker implements MessageBroker {
   }
 
   @Override
-  public void publish(final String channelName, final byte[] payload) {
+  public CompletionStage<Long> publish(final String channelName, final byte[] payload) {
     connection.publish(channelName, payload);
+    return completedFuture(0L);
   }
 
   @Override

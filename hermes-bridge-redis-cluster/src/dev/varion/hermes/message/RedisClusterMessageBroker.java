@@ -2,30 +2,35 @@ package dev.varion.hermes.message;
 
 import dev.varion.hermes.HermesListener;
 import dev.varion.hermes.message.codec.RedisBinaryCodec;
+import io.lettuce.core.RedisURI;
 import io.lettuce.core.cluster.RedisClusterClient;
 import io.lettuce.core.cluster.api.StatefulRedisClusterConnection;
-import io.lettuce.core.pubsub.StatefulRedisPubSubConnection;
+import io.lettuce.core.cluster.pubsub.StatefulRedisClusterPubSubConnection;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.CompletionStage;
 
-public final class RedisMessageBroker implements MessageBroker {
+public final class RedisClusterMessageBroker implements MessageBroker {
 
-  private final RedisClusterClient redisClient;
+  private final RedisClusterClient redisClusterClient;
   private final StatefulRedisClusterConnection<String, byte[]> connection;
-  private final StatefulRedisPubSubConnection<String, byte[]> pubSubConnection;
+  private final StatefulRedisClusterPubSubConnection<String, byte[]> pubSubConnection;
   private final Set<String> subscribedTopics;
 
-  RedisMessageBroker(final RedisClusterClient redisClient) {
-    this.redisClient = redisClient;
+  RedisClusterMessageBroker(final RedisClusterClient redisClusterClient) {
+    this.redisClusterClient = redisClusterClient;
     final RedisBinaryCodec codec = RedisBinaryCodec.INSTANCE;
-    connection = redisClient.connect(codec);
-    pubSubConnection = redisClient.connectPubSub(codec);
+    connection = redisClusterClient.connect(codec);
+    pubSubConnection = redisClusterClient.connectPubSub(codec);
     subscribedTopics = new HashSet<>();
   }
 
-  public static MessageBroker create(final RedisClusterClient redisClient) {
-    return new RedisMessageBroker(redisClient);
+  public static MessageBroker create(final RedisClusterClient redisClusterClient) {
+    return new RedisClusterMessageBroker(redisClusterClient);
+  }
+
+  public static MessageBroker create(final Iterable<RedisURI> redisURIs) {
+    return new RedisClusterMessageBroker(RedisClusterClient.create(redisURIs));
   }
 
   @Override
@@ -52,7 +57,7 @@ public final class RedisMessageBroker implements MessageBroker {
 
   @Override
   public void close() {
-    redisClient.close();
+    redisClusterClient.close();
     connection.close();
     pubSubConnection.close();
     subscribedTopics.clear();
