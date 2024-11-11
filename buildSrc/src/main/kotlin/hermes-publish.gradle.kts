@@ -14,7 +14,7 @@ publishing {
     repositories {
         mavenLocal()
         maven(
-            name = "varion",
+            name = "flameRepository",
             url = "https://repo.varion.dev",
             username = "MAVEN_USERNAME",
             password = "MAVEN_PASSWORD"
