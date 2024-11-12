@@ -2,7 +2,7 @@ package dev.varion.hermes.keyvalue;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
-import dev.varion.hermes.message.codec.RedisBinaryCodec;
+import dev.varion.hermes.packet.codec.RedisBinaryCodec;
 import io.lettuce.core.cluster.RedisClusterClient;
 import io.lettuce.core.cluster.api.StatefulRedisClusterConnection;
 

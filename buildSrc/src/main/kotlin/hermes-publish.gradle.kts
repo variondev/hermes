@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "dev.varion.hermes"
-version = "1.1.0-SNAPSHOT"
+version = "1.1.1-SNAPSHOT"
 
 java {
     withSourcesJar()
@@ -14,7 +14,7 @@ publishing {
     repositories {
         mavenLocal()
         maven(
-            name = "flameRepository",
+            name = "flame",
             url = "https://repo.varion.dev",
             username = "MAVEN_USERNAME",
             password = "MAVEN_PASSWORD"

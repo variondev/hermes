@@ -1,27 +1,27 @@
 package dev.varion.hermes;
 
 import dev.shiza.dew.event.EventBus;
+import dev.varion.hermes.callback.PacketCallbackConfig;
+import dev.varion.hermes.callback.PacketCallbackFacade;
+import dev.varion.hermes.callback.requester.PacketCallbackRequester;
 import dev.varion.hermes.distributed.DistributedLockConfig;
 import dev.varion.hermes.distributed.DistributedLocks;
 import dev.varion.hermes.keyvalue.KeyValueConfig;
 import dev.varion.hermes.keyvalue.KeyValueStorage;
-import dev.varion.hermes.message.MessageBroker;
-import dev.varion.hermes.message.MessageBrokerConfig;
-import dev.varion.hermes.message.callback.MessageCallbackConfig;
-import dev.varion.hermes.message.callback.MessageCallbackFacade;
-import dev.varion.hermes.message.callback.requester.MessageCallbackRequester;
-import dev.varion.hermes.message.codec.MessageCodec;
-import dev.varion.hermes.message.codec.MessageCodecConfig;
-import dev.varion.hermes.message.pubsub.MessagePublisher;
-import dev.varion.hermes.message.pubsub.MessageSubscriber;
+import dev.varion.hermes.packet.PacketBroker;
+import dev.varion.hermes.packet.PacketBrokerConfig;
+import dev.varion.hermes.packet.codec.PacketCodec;
+import dev.varion.hermes.packet.codec.PacketCodecConfig;
+import dev.varion.hermes.pubsub.PacketPublisher;
+import dev.varion.hermes.pubsub.PacketSubscriber;
 import java.util.function.Consumer;
 
 public final class HermesConfigurator {
 
   private final EventBusConfig eventBusConfig = new EventBusConfig();
-  private final MessageBrokerConfig messageBrokerConfig = new MessageBrokerConfig();
-  private final MessageCallbackConfig messageCallbackConfig = new MessageCallbackConfig();
-  private final MessageCodecConfig messageCodecConfig = new MessageCodecConfig();
+  private final PacketBrokerConfig packetBrokerConfig = new PacketBrokerConfig();
+  private final PacketCallbackConfig packetCallbackConfig = new PacketCallbackConfig();
+  private final PacketCodecConfig packetCodecConfig = new PacketCodecConfig();
   private final KeyValueConfig keyValueConfig = new KeyValueConfig();
   private final DistributedLockConfig distributedLockConfig = new DistributedLockConfig();
 
@@ -31,14 +31,14 @@ public final class HermesConfigurator {
     final HermesConfigurator configurator = new HermesConfigurator();
     mutator.accept(configurator);
 
-    final MessageBroker messageBroker = configurator.messageBroker().get();
-    if (messageBroker == null) {
-      throw new HermesException("Message broker is missing while building Hermes.");
+    final PacketBroker packetBroker = configurator.messageBroker().get();
+    if (packetBroker == null) {
+      throw new HermesException("Packet broker is missing while building Hermes.");
     }
 
-    final MessageCodec messageCodec = configurator.messageCodec().get();
-    if (messageCodec == null) {
-      throw new HermesException("Message codec is missing while building Hermes.");
+    final PacketCodec packetCodec = configurator.messageCodec().get();
+    if (packetCodec == null) {
+      throw new HermesException("Packet codec is missing while building Hermes.");
     }
 
     final KeyValueStorage keyValueStorage = configurator.keyValue().get();
@@ -54,24 +54,24 @@ public final class HermesConfigurator {
       distributedLocks = DistributedLocks.create(keyValueStorage);
     }
 
-    final MessagePublisher messagePublisher = MessagePublisher.create(messageBroker, messageCodec);
-    final MessageCallbackFacade messageCallbackFacade = MessageCallbackFacade.create();
+    final PacketPublisher packetPublisher = PacketPublisher.create(packetBroker, packetCodec);
+    final PacketCallbackFacade packetCallbackFacade = PacketCallbackFacade.create();
     return new HermesImpl(
-        messageBroker,
+        packetBroker,
         keyValueStorage,
         distributedLocks,
-        messagePublisher,
-        MessageCallbackRequester.create(
-            messageBroker,
-            messageCodec,
-            messageCallbackFacade,
+        packetPublisher,
+        PacketCallbackRequester.create(
+            packetBroker,
+            packetCodec,
+            packetCallbackFacade,
             configurator.messageCallback().requestCleanupInterval()),
-        MessageSubscriber.create(
+        PacketSubscriber.create(
             configurator.eventBus().get(),
-            messageBroker,
-            messagePublisher,
-            messageCallbackFacade,
-            messageCodec));
+            packetBroker,
+            packetPublisher,
+            packetCallbackFacade,
+            packetCodec));
   }
 
   public EventBusConfig eventBus() {
@@ -83,30 +83,30 @@ public final class HermesConfigurator {
     return this;
   }
 
-  public MessageBrokerConfig messageBroker() {
-    return messageBrokerConfig;
+  public PacketBrokerConfig messageBroker() {
+    return packetBrokerConfig;
   }
 
-  public HermesConfigurator messageBroker(final Consumer<MessageBrokerConfig> mutator) {
-    mutator.accept(messageBrokerConfig);
+  public HermesConfigurator messageBroker(final Consumer<PacketBrokerConfig> mutator) {
+    mutator.accept(packetBrokerConfig);
     return this;
   }
 
-  public MessageCallbackConfig messageCallback() {
-    return messageCallbackConfig;
+  public PacketCallbackConfig messageCallback() {
+    return packetCallbackConfig;
   }
 
-  public HermesConfigurator messageCallback(final Consumer<MessageCallbackConfig> mutator) {
-    mutator.accept(messageCallbackConfig);
+  public HermesConfigurator messageCallback(final Consumer<PacketCallbackConfig> mutator) {
+    mutator.accept(packetCallbackConfig);
     return this;
   }
 
-  public MessageCodecConfig messageCodec() {
-    return messageCodecConfig;
+  public PacketCodecConfig messageCodec() {
+    return packetCodecConfig;
   }
 
-  public HermesConfigurator messageCodec(final Consumer<MessageCodecConfig> mutator) {
-    mutator.accept(messageCodecConfig);
+  public HermesConfigurator messageCodec(final Consumer<PacketCodecConfig> mutator) {
+    mutator.accept(packetCodecConfig);
     return this;
   }
 

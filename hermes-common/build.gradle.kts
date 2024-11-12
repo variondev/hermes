@@ -8,7 +8,7 @@ plugins {
 dependencies {
     api("dev.shiza:dew:1.1.2")
     api("com.spotify:completable-futures:0.3.6")
-    testImplementation(project(":hermes-codec-msgpack"))
+    testImplementation(project(":hermes-codec-msgpack-jackson"))
     testImplementation(project(":hermes-bridge-redis"))
     testImplementation(project(":hermes-bridge-nats"))
     testImplementation("io.lettuce:lettuce-core:6.4.0.RELEASE")

@@ -1,6 +1,6 @@
 # Hermes
 
-**Hermes** is a versatile framework for advanced message handling, providing `publish-subscribe`
+**Hermes** is a versatile framework for advanced packet handling, providing `publish-subscribe`
 mechanisms, asynchronous `request-response` capabilities with CompletableFuture, access to
 `key-value` storage, and `distributed locking`, all with robust exception handling.
 
@@ -17,21 +17,21 @@ maven("https://repo.varion.dev/snapshots")
 **Core:**
 
 ```kotlin
-implementation("dev.varion.hermes:hermes-common:1.1.0-SNAPSHOT")
+implementation("dev.varion.hermes:hermes-common:1.1.1-SNAPSHOT")
 ```
 
 **Codec:**
 
 ```kotlin
-implementation("dev.varion.hermes:hermes-codec-jackson:1.1.0-SNAPSHOT")
-implementation("dev.varion.hermes:hermes-codec-msgpack:1.1.0-SNAPSHOT")
+implementation("dev.varion.hermes:hermes-codec-jackson:1.1.1-SNAPSHOT")
+implementation("dev.varion.hermes:hermes-codec-msgpack-jackson:1.1.1-SNAPSHOT")
 ```
 
 **Bridge:**
 
 ```kotlin
-implementation("dev.varion.hermes:hermes-bridge-nats:1.1.0-SNAPSHOT")
-implementation("dev.varion.hermes:hermes-bridge-redis:1.1.0-SNAPSHOT")
+implementation("dev.varion.hermes:hermes-bridge-nats:1.1.1-SNAPSHOT")
+implementation("dev.varion.hermes:hermes-bridge-redis:1.1.1-SNAPSHOT")
 ```
 
 ---

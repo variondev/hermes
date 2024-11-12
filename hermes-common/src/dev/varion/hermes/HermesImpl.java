@@ -1,54 +1,54 @@
 package dev.varion.hermes;
 
 import dev.shiza.dew.subscription.Subscriber;
+import dev.varion.hermes.callback.requester.PacketCallbackRequester;
 import dev.varion.hermes.distributed.DistributedLocks;
 import dev.varion.hermes.keyvalue.KeyValueStorage;
-import dev.varion.hermes.message.Message;
-import dev.varion.hermes.message.MessageBroker;
-import dev.varion.hermes.message.callback.requester.MessageCallbackRequester;
-import dev.varion.hermes.message.pubsub.MessagePublisher;
-import dev.varion.hermes.message.pubsub.MessageSubscriber;
+import dev.varion.hermes.packet.Packet;
+import dev.varion.hermes.packet.PacketBroker;
+import dev.varion.hermes.pubsub.PacketPublisher;
+import dev.varion.hermes.pubsub.PacketSubscriber;
 import java.io.IOException;
 import java.util.concurrent.CompletableFuture;
 
 final class HermesImpl implements Hermes {
 
-  private final MessageBroker messageBroker;
+  private final PacketBroker packetBroker;
   private final KeyValueStorage keyValueStorage;
   private final DistributedLocks distributedLocks;
-  private final MessagePublisher messagePublisher;
-  private final MessageCallbackRequester messageCallbackRequester;
-  private final MessageSubscriber messageSubscriber;
+  private final PacketPublisher packetPublisher;
+  private final PacketCallbackRequester packetCallbackRequester;
+  private final PacketSubscriber packetSubscriber;
 
   HermesImpl(
-      final MessageBroker messageBroker,
+      final PacketBroker packetBroker,
       final KeyValueStorage keyValueStorage,
       final DistributedLocks distributedLocks,
-      final MessagePublisher messagePublisher,
-      final MessageCallbackRequester messageCallbackRequester,
-      final MessageSubscriber messageSubscriber) {
-    this.messageBroker = messageBroker;
+      final PacketPublisher packetPublisher,
+      final PacketCallbackRequester packetCallbackRequester,
+      final PacketSubscriber packetSubscriber) {
+    this.packetBroker = packetBroker;
     this.keyValueStorage = keyValueStorage;
     this.distributedLocks = distributedLocks;
-    this.messagePublisher = messagePublisher;
-    this.messageCallbackRequester = messageCallbackRequester;
-    this.messageSubscriber = messageSubscriber;
+    this.packetPublisher = packetPublisher;
+    this.packetCallbackRequester = packetCallbackRequester;
+    this.packetSubscriber = packetSubscriber;
   }
 
   @Override
-  public <T extends Message> void publish(final String channelName, final T packet) {
-    messagePublisher.publish(channelName, packet);
+  public <T extends Packet> void publish(final String channelName, final T packet) {
+    packetPublisher.publish(channelName, packet);
   }
 
   @Override
   public void subscribe(final Subscriber subscriber) {
-    messageSubscriber.subscribe(subscriber);
+    packetSubscriber.subscribe(subscriber);
   }
 
   @Override
-  public <T extends Message> CompletableFuture<T> request(
-      final String channelName, final Message request) {
-    return messageCallbackRequester.request(channelName, request);
+  public <T extends Packet> CompletableFuture<T> request(
+      final String channelName, final Packet request) {
+    return packetCallbackRequester.request(channelName, request);
   }
 
   @Override
@@ -69,6 +69,6 @@ final class HermesImpl implements Hermes {
 
   @Override
   public void close() throws IOException {
-    messageBroker.close();
+    packetBroker.close();
   }
 }

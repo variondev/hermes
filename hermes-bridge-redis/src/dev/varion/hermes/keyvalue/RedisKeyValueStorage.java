@@ -2,25 +2,24 @@ package dev.varion.hermes.keyvalue;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
-import dev.varion.hermes.message.codec.RedisBinaryCodec;
-import io.lettuce.core.cluster.RedisClusterClient;
-import io.lettuce.core.cluster.api.StatefulRedisClusterConnection;
+import dev.varion.hermes.packet.codec.RedisBinaryCodec;
+import io.lettuce.core.RedisClient;
+import io.lettuce.core.api.StatefulRedisConnection;
 
 public final class RedisKeyValueStorage implements KeyValueStorage {
 
-  private final StatefulRedisClusterConnection<String, byte[]> clusterConnection;
+  private final StatefulRedisConnection<String, byte[]> clusterConnection;
 
-  RedisKeyValueStorage(final StatefulRedisClusterConnection<String, byte[]> clusterConnection) {
+  RedisKeyValueStorage(final StatefulRedisConnection<String, byte[]> clusterConnection) {
     this.clusterConnection = clusterConnection;
   }
 
-  public static KeyValueStorage create(
-      final StatefulRedisClusterConnection<String, byte[]> connection) {
+  public static KeyValueStorage create(final StatefulRedisConnection<String, byte[]> connection) {
     return new RedisKeyValueStorage(connection);
   }
 
-  public static KeyValueStorage create(final RedisClusterClient redisClusterClient) {
-    return create(redisClusterClient.connect(RedisBinaryCodec.INSTANCE));
+  public static KeyValueStorage create(final RedisClient redisClient) {
+    return create(redisClient.connect(RedisBinaryCodec.INSTANCE));
   }
 
   @Override

@@ -1,10 +1,8 @@
 package dev.varion.hermes;
 
-import dev.varion.hermes.message.codec.MessagePackMessage;
-import org.msgpack.core.MessageBufferPacker;
-import org.msgpack.core.MessageUnpacker;
+import dev.varion.hermes.packet.codec.JacksonPacket;
 
-public class PingMessage extends MessagePackMessage {
+public class PingMessage extends JacksonPacket {
 
   private String content;
 
@@ -16,15 +14,5 @@ public class PingMessage extends MessagePackMessage {
 
   public String getContent() {
     return content;
-  }
-
-  @Override
-  public void write(final MessageBufferPacker packer) throws Exception {
-    packer.packString(content);
-  }
-
-  @Override
-  public void read(final MessageUnpacker unpacker) throws Exception {
-    content = unpacker.unpackString();
   }
 }
