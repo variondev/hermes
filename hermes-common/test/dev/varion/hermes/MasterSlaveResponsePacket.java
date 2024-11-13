@@ -2,13 +2,13 @@ package dev.varion.hermes;
 
 import dev.varion.hermes.packet.codec.JacksonPacket;
 
-public class PingMessage extends JacksonPacket {
+public class MasterSlaveResponsePacket extends JacksonPacket {
 
   private String content;
 
-  public PingMessage() {}
+  public MasterSlaveResponsePacket() {}
 
-  public PingMessage(final String content) {
+  public MasterSlaveResponsePacket(final String content) {
     this.content = content;
   }
 

@@ -1,41 +1,195 @@
-# Hermes
+# **Hermes Framework**
 
-**Hermes** is a versatile framework for advanced packet handling, providing `publish-subscribe`
-mechanisms, asynchronous `request-response` capabilities with CompletableFuture, access to
-`key-value` storage, and `distributed locking`, all with robust exception handling.
+**Hermes** is a high-performance, modular framework tailored for advanced packet handling and
+asynchronous communication in distributed systems. It supports `publish-subscribe` messaging,
+asynchronous `request-response` operations using `CompletableFuture`, robust `key-value` storage,
+and `distributed locking` mechanisms—all with advanced error management to ensure system
+reliability.
 
-## Getting Started
+## **Quick Start Guide**
 
-### Add Repository
+### **Repository Setup**
+
+To add Hermes to your project, include the following Maven repository:
 
 ```kotlin
 maven("https://repo.varion.dev/snapshots")
 ```
 
-### Add Dependencies
+### **Add Dependencies**
 
-**Core:**
+#### Core Components
 
 ```kotlin
 implementation("dev.varion.hermes:hermes-common:1.1.1-SNAPSHOT")
 ```
 
-**Codec:**
+#### Codec Support
+
+To handle serialization and deserialization, include:
 
 ```kotlin
 implementation("dev.varion.hermes:hermes-codec-jackson:1.1.1-SNAPSHOT")
 implementation("dev.varion.hermes:hermes-codec-msgpack-jackson:1.1.1-SNAPSHOT")
 ```
 
-**Bridge:**
+#### Bridge Integrations
+
+For bridge-based communication:
 
 ```kotlin
 implementation("dev.varion.hermes:hermes-bridge-nats:1.1.1-SNAPSHOT")
 implementation("dev.varion.hermes:hermes-bridge-redis:1.1.1-SNAPSHOT")
 ```
 
+[**Examples of Hermes Implementations**](hermes-common/test)
+
+---
+
+## **Hermes Configuration Example**
+
+Below is a sample configuration of Hermes with Redis-based packet brokering and key-value storage.
+This setup also integrates Jackson-based message codecs for structured packet handling.
+
+```java
+final RedisClient redisClient = RedisClient.create("redis://localhost:6379");
+final ObjectMapper msgpackMapper = MsgpackJacksonObjectMapperFactory.getMsgpackJacksonObjectMapper();
+
+final Hermes hermes = HermesConfigurator.configure(configurator ->
+    configurator
+        .messageBroker(config -> config.using(RedisPacketBroker.create(redisClient)))
+        .keyValue(config -> config.using(RedisKeyValueStorage.create(redisClient)))
+        .distributedLock(config -> config.using(true))
+        .messageCallback(config -> config.requestCleanupInterval(Duration.ofSeconds(10L)))
+        .messageCodec(config -> config.using(
+            JacksonPacketCodecFactory.getJacksonPacketCodec(msgpackMapper))));
+
+// Ensure to close the Hermes instance during shutdown
+hermes.
+
+close();
+```
+
+### **Example Packet Structure**
+
+Hermes supports flexible packet structures, adaptable for P2P, C2S, or S2C models. Here is a basic
+example of a request packet.
+
+```java
+public class ExampleRequestPacket extends JacksonPacket {
+
+  private String content;
+
+  public ExampleRequestPacket() {
+  }
+
+  public ExampleRequestPacket(final String content) {
+    this.content = content;
+  }
+
+  public String getContent() {
+    return content;
+  }
+}
+```
+
+### **Subscriber Example**
+
+Hermes allows defining subscribers with flexible receiving logic. Subscribers are isolated to
+specific topics but can be scaled across multiple instances as needed.
+
+```java
+public class ExampleListener implements Subscriber {
+
+  @Subscribe
+  public Packet receive(final ExampleRequestPacket request) {
+    if (condition) {
+      return null; // Return null if conditions are not met
+    }
+    final ExampleResponsePacket response = new ExampleResponsePacket(
+        request.getContent() + " Pong!");
+    return response.dispatchTo(request.getUniqueId());
+  }
+
+  @Subscribe
+  public void receive(final BroadcastPacket packet) {
+    System.out.printf("Received P2P packet: %s%n", packet.getContent());
+  }
+
+  @Override
+  public String identity() {
+    return "tests";
+  }
+}
+```
+
+### **Distributed Locking Example**
+
+Below is an example demonstrating the use of Hermes' distributed locking, ideal for synchronizing
+access to shared resources in multi-threaded environments.
+
+```java
+final DistributedLock lock = hermes.distributedLocks().createLock("my_lock");
+final ExecutorService executorService = Executors.newFixedThreadPool(10);
+
+IntStream.
+
+range(0,10).
+
+forEach(i ->executorService.
+
+submit(() ->{
+    while(true){
+    try{
+    lock.
+
+execute(() ->{
+    System.out.
+
+println("Thread "+i +" acquired the lock!");
+                    try{Thread.
+
+sleep(100); }catch(
+InterruptedException ignored){}
+    },
+    Duration.
+
+ofMillis(10L),
+                Duration.
+
+ofSeconds(5L))
+    .
+
+whenComplete((unused, throwable) ->System.out.
+
+println("Thread "+i +" released the lock!"))
+    .
+
+join();
+        }catch(
+Exception e){e.
+
+printStackTrace(); }
+    }
+    }));
+    executorService.
+
+shutdown();
+while(!executorService.
+
+isTerminated()){
+    System.out.
+
+println("Waiting for all tasks to complete...");
+    try{Thread.
+
+sleep(1000); }catch(
+InterruptedException ignored){}
+    }
+```
+
 ---
 
 <p align="center">
-  <img height="100em" src="https://count.getloli.com/get/@:awa?theme=rule33" alt="loli"/>
+  <img height="100em" src="https://count.getloli.com/get/@:awa?theme=rule33" alt="usage-count"/>
 </p>

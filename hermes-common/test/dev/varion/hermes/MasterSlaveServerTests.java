@@ -6,9 +6,11 @@ import static java.lang.Thread.sleep;
 
 import dev.shiza.dew.subscription.Subscribe;
 import dev.shiza.dew.subscription.Subscriber;
+import dev.varion.hermes.keyvalue.RedisKeyValueStorage;
 import dev.varion.hermes.packet.Packet;
 import dev.varion.hermes.packet.RedisPacketBroker;
 import io.lettuce.core.RedisClient;
+import java.time.Duration;
 
 public final class MasterSlaveServerTests {
 
@@ -16,19 +18,22 @@ public final class MasterSlaveServerTests {
 
   @SuppressWarnings({"BusyWait", "InfiniteLoopStatement"})
   public static void main(final String[] args) {
-    try (final Hermes hermes =
-        HermesConfigurator.configure(
-            configurator ->
-                configurator
-                    .messageBroker(
-                        config ->
-                            config.using(
-                                RedisPacketBroker.create(
-                                    RedisClient.create("redis://localhost:6379"))))
-                    .messageCodec(
-                        config ->
-                            config.using(
-                                getJacksonPacketCodec(getMsgpackJacksonObjectMapper()))))) {
+
+    try (final RedisClient redisClient = RedisClient.create("redis://localhost:6379");
+        final Hermes hermes =
+            HermesConfigurator.configure(
+                configurator ->
+                    configurator
+                        .messageBroker(
+                            config -> config.using(RedisPacketBroker.create(redisClient)))
+                        .keyValue(config -> config.using(RedisKeyValueStorage.create(redisClient)))
+                        .distributedLock(config -> config.using(true))
+                        .messageCallback(
+                            config -> config.requestCleanupInterval(Duration.ofSeconds(10L)))
+                        .messageCodec(
+                            config ->
+                                config.using(
+                                    getJacksonPacketCodec(getMsgpackJacksonObjectMapper()))))) {
 
       hermes.subscribe(new PongListener());
 
@@ -44,11 +49,12 @@ public final class MasterSlaveServerTests {
   public static final class PongListener implements Subscriber {
 
     @Subscribe
-    public Packet receive(final PingMessage request) {
+    public Packet receive(final MasterSlaveRequestPacket request) {
       // method can be a void, no need to return any packets,
       // if response cannot be sent it's also
       // fine you can return null
-      final PongMessage response = new PongMessage(request.getContent() + " Pong!");
+      final MasterSlaveResponsePacket response =
+          new MasterSlaveResponsePacket(request.getContent() + " Pong!");
       return response.dispatchTo(request.getUniqueId());
     }
 

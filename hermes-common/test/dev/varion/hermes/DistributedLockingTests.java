@@ -52,7 +52,6 @@ public final class DistributedLockingTests {
                     .distributedLock(config -> config.using(true)));
 
     final DistributedLock lock = hermes.distributedLocks().createLock("my_resource");
-
     final ExecutorService executorService = Executors.newFixedThreadPool(10);
     IntStream.range(0, 10)
         .forEach(
@@ -72,7 +71,7 @@ public final class DistributedLockingTests {
                                   ofMillis(10L),
                                   ofSeconds(5L))
                               .whenComplete(
-                                  (v, t) ->
+                                  (unused, throwable) ->
                                       System.out.println("Thread " + i + " released the lock!"))
                               .join();
                         } catch (final Exception e) {
@@ -80,9 +79,7 @@ public final class DistributedLockingTests {
                         }
                       }
                     }));
-
     executorService.shutdown();
-
     while (!executorService.isTerminated()) {
       System.out.println("Waiting for all tasks to finish...");
       try {

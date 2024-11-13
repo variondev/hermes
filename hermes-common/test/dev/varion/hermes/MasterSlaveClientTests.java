@@ -1,9 +1,9 @@
 package dev.varion.hermes;
 
-import static dev.varion.hermes.packet.codec.JacksonPacketCodecFactory.getJacksonPacketCodec;
 import static dev.varion.hermes.packet.codec.MsgpackJacksonObjectMapperFactory.getMsgpackJacksonObjectMapper;
 
 import dev.varion.hermes.packet.RedisPacketBroker;
+import dev.varion.hermes.packet.codec.JacksonPacketCodecFactory;
 import io.lettuce.core.RedisClient;
 
 public final class MasterSlaveClientTests {
@@ -23,9 +23,10 @@ public final class MasterSlaveClientTests {
                     .messageCodec(
                         config ->
                             config.using(
-                                getJacksonPacketCodec(getMsgpackJacksonObjectMapper()))))) {
+                                JacksonPacketCodecFactory.getJacksonPacketCodec(
+                                    getMsgpackJacksonObjectMapper()))))) {
       hermes
-          .<PongMessage>request("tests", new PingMessage("Ping!"))
+          .<MasterSlaveResponsePacket>request("tests", new MasterSlaveRequestPacket("Ping!"))
           .thenAccept(
               packet ->
                   System.out.printf(
