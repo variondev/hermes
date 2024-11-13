@@ -117,27 +117,14 @@ Below is an example demonstrating the use of Hermes' distributed locking, ideal 
 
 ```java
 final DistributedLock lock = hermes.distributedLocks().createLock("my_lock");
-final ExecutorService executorService = Executors.newFixedThreadPool(10);
-
-IntStream.range(0, 10).forEach(i -> executorService.submit(() -> {
-    while (true) {
-        try {
-            lock.execute(() -> {
-                    System.out.println("Thread " + i + " acquired the lock!");
-                    try { Thread.sleep(100); } catch (InterruptedException ignored) {}
-                },
-                Duration.ofMillis(10L),
-                Duration.ofSeconds(5L))
-            .whenComplete((unused, throwable) -> System.out.println("Thread " + i + " released the lock!"))
-            .join();
-        } catch (Exception e) { e.printStackTrace(); }
-    }
-}));
-executorService.shutdown();
-while (!executorService.isTerminated()) {
-    System.out.println("Waiting for all tasks to complete...");
-    try { Thread.sleep(1000); } catch (InterruptedException ignored) {}
-}
+lock.execute(() -> {
+      System.out.println("Thread " + i + " acquired the lock!");
+      try { Thread.sleep(100); } catch (InterruptedException ignored) {}
+      },
+      Duration.ofMillis(10L),
+      Duration.ofSeconds(5L))
+    .whenComplete((unused, throwable) -> System.out.println("Thread " + i + " released the lock!"))
+    .join();
 ```
 
 ---
