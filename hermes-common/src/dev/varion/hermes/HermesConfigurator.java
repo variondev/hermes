@@ -31,12 +31,12 @@ public final class HermesConfigurator {
     final HermesConfigurator configurator = new HermesConfigurator();
     mutator.accept(configurator);
 
-    final PacketBroker packetBroker = configurator.messageBroker().get();
+    final PacketBroker packetBroker = configurator.packetBroker().get();
     if (packetBroker == null) {
       throw new HermesException("Packet broker is missing while building Hermes.");
     }
 
-    final PacketCodec packetCodec = configurator.messageCodec().get();
+    final PacketCodec packetCodec = configurator.packetCodec().get();
     if (packetCodec == null) {
       throw new HermesException("Packet codec is missing while building Hermes.");
     }
@@ -65,7 +65,7 @@ public final class HermesConfigurator {
             packetBroker,
             packetCodec,
             packetCallbackFacade,
-            configurator.messageCallback().requestCleanupInterval()),
+            configurator.packetCallback().requestCleanupInterval()),
         PacketSubscriber.create(
             configurator.eventBus().get(),
             packetBroker,
@@ -83,29 +83,29 @@ public final class HermesConfigurator {
     return this;
   }
 
-  public PacketBrokerConfig messageBroker() {
+  public PacketBrokerConfig packetBroker() {
     return packetBrokerConfig;
   }
 
-  public HermesConfigurator messageBroker(final Consumer<PacketBrokerConfig> mutator) {
+  public HermesConfigurator packetBroker(final Consumer<PacketBrokerConfig> mutator) {
     mutator.accept(packetBrokerConfig);
     return this;
   }
 
-  public PacketCallbackConfig messageCallback() {
+  public PacketCallbackConfig packetCallback() {
     return packetCallbackConfig;
   }
 
-  public HermesConfigurator messageCallback(final Consumer<PacketCallbackConfig> mutator) {
+  public HermesConfigurator packetCallback(final Consumer<PacketCallbackConfig> mutator) {
     mutator.accept(packetCallbackConfig);
     return this;
   }
 
-  public PacketCodecConfig messageCodec() {
+  public PacketCodecConfig packetCodec() {
     return packetCodecConfig;
   }
 
-  public HermesConfigurator messageCodec(final Consumer<PacketCodecConfig> mutator) {
+  public HermesConfigurator packetCodec(final Consumer<PacketCodecConfig> mutator) {
     mutator.accept(packetCodecConfig);
     return this;
   }

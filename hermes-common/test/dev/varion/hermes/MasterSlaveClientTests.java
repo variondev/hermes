@@ -15,12 +15,12 @@ public final class MasterSlaveClientTests {
         HermesConfigurator.configure(
             configurator ->
                 configurator
-                    .messageBroker(
+                    .packetBroker(
                         config ->
                             config.using(
                                 RedisPacketBroker.create(
                                     RedisClient.create("redis://localhost:6379"))))
-                    .messageCodec(
+                    .packetCodec(
                         config ->
                             config.using(
                                 JacksonPacketCodecFactory.getJacksonPacketCodec(

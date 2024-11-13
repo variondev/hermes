@@ -23,7 +23,7 @@ final class PacketPublisherImpl implements PacketPublisher {
       return packetBroker.publish(channelName, payload);
     } catch (final Exception exception) {
       throw new PacketPublishingException(
-          "Could not publish packet over the message broker, because of unexpected exception.",
+          "Could not publish packet over the packet broker, because of unexpected exception.",
           exception);
     }
   }

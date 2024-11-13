@@ -41,7 +41,7 @@ public final class RedisClusterPacketBroker implements PacketBroker {
         .exceptionally(
             cause -> {
               throw new PacketBrokerException(
-                  "Could not publish a message, because of unexpected exception.", cause);
+                  "Could not publish a packet, because of unexpected exception.", cause);
             });
   }
 

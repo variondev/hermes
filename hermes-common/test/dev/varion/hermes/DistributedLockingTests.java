@@ -36,8 +36,8 @@ public final class DistributedLockingTests {
         HermesConfigurator.configure(
             configurator ->
                 configurator
-                    .messageBroker(config -> config.using(NatsPacketBroker.create(connection)))
-                    .messageCodec(
+                    .packetBroker(config -> config.using(NatsPacketBroker.create(connection)))
+                    .packetCodec(
                         config ->
                             config.using(getJacksonPacketCodec(getMsgpackJacksonObjectMapper())))
                     .keyValue(

@@ -52,11 +52,11 @@ final ObjectMapper msgpackMapper = MsgpackJacksonObjectMapperFactory.getMsgpackJ
 
 final Hermes hermes = HermesConfigurator.configure(configurator ->
     configurator
-        .messageBroker(config -> config.using(RedisPacketBroker.create(redisClient)))
+        .packetBroker(config -> config.using(RedisPacketBroker.create(redisClient)))
         .keyValue(config -> config.using(RedisKeyValueStorage.create(redisClient)))
         .distributedLock(config -> config.using(true))
-        .messageCallback(config -> config.requestCleanupInterval(Duration.ofSeconds(10L)))
-        .messageCodec(config -> config.using(JacksonPacketCodecFactory.getJacksonPacketCodec(msgpackMapper))));
+        .packetCallback(config -> config.requestCleanupInterval(Duration.ofSeconds(10L)))
+        .packetCodec(config -> config.using(JacksonPacketCodecFactory.getJacksonPacketCodec(msgpackMapper))));
 
 // Ensure to close the Hermes instance during shutdown
 hermes.close();

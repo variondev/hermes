@@ -25,7 +25,7 @@ public final class NatsPacketBroker implements PacketBroker {
       return create(Nats.connect(options));
     } catch (final Exception exception) {
       throw new PacketBrokerException(
-          "Could not initiate a nats connection required for a message broker, because of unexpected exception.",
+          "Could not initiate a nats connection required for a packet broker, because of unexpected exception.",
           exception);
     }
   }
@@ -49,7 +49,7 @@ public final class NatsPacketBroker implements PacketBroker {
       connection.close();
     } catch (final InterruptedException exception) {
       throw new PacketBrokerException(
-          "Could not close nats message broker, because of unexpected exception.", exception);
+          "Could not close nats packet broker, because of unexpected exception.", exception);
     }
   }
 }

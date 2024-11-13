@@ -24,13 +24,13 @@ public final class MasterSlaveServerTests {
             HermesConfigurator.configure(
                 configurator ->
                     configurator
-                        .messageBroker(
+                        .packetBroker(
                             config -> config.using(RedisPacketBroker.create(redisClient)))
                         .keyValue(config -> config.using(RedisKeyValueStorage.create(redisClient)))
                         .distributedLock(config -> config.using(true))
-                        .messageCallback(
+                        .packetCallback(
                             config -> config.requestCleanupInterval(Duration.ofSeconds(10L)))
-                        .messageCodec(
+                        .packetCodec(
                             config ->
                                 config.using(
                                     getJacksonPacketCodec(getMsgpackJacksonObjectMapper()))))) {
@@ -60,7 +60,7 @@ public final class MasterSlaveServerTests {
 
     @Subscribe
     public void receive(final BroadcastPacket packet) {
-      System.out.printf("Received peer message: %s%n", packet.getContent());
+      System.out.printf("Received p2p packet: %s%n", packet.getContent());
     }
 
     @Override
