@@ -16,7 +16,7 @@ dependencies {
     testImplementation("io.lettuce:lettuce-core:6.4.0.RELEASE")
     testImplementation("com.fasterxml.jackson.core:jackson-databind:2.18.1")
     testImplementation("org.msgpack:jackson-dataformat-msgpack:0.9.8")
-    testImplementation("io.nats:jnats:2.20.2")
+    testImplementation("io.nats:jnats:2.20.4")
 }
 
 hermesPublish {
