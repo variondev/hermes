@@ -1,15 +1,17 @@
-package dev.varion.hermes.eventbus.result;
+package dev.varion.hermes;
 
 import dev.shiza.dew.event.Event;
+import dev.shiza.dew.result.ResultHandler;
+import dev.shiza.dew.result.ResultHandlerFacade;
+import dev.shiza.dew.result.ResultHandlingException;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.concurrent.CompletableFuture;
 
-final class ResultHandlerService implements ResultHandlerFacade {
+final class HermesResultHandler implements ResultHandlerFacade {
 
   private final Map<Class<?>, ResultHandler<?, ?>> handlers;
 
-  ResultHandlerService(final Map<Class<?>, ResultHandler<?, ?>> handlers) {
+  HermesResultHandler(final Map<Class<?>, ResultHandler<?, ?>> handlers) {
     this.handlers = handlers;
   }
 
@@ -33,8 +35,8 @@ final class ResultHandlerService implements ResultHandlerFacade {
     final ResultHandler<?, ?> resultHandler = getResultHandler(value.getClass());
     if (resultHandler == null) {
       throw new ResultHandlingException(
-              "Could not handle result of type %s, because of missing result handler."
-                      .formatted(value.getClass().getName()));
+          "Could not handle result of type %s, because of missing result handler."
+              .formatted(value.getClass().getName()));
     }
     ((ResultHandler<E, T>) resultHandler).handle(event, value);
   }
@@ -45,7 +47,7 @@ final class ResultHandlerService implements ResultHandlerFacade {
       return resultHandler;
     }
 
-    for (final Entry<Class<?>, ResultHandler<?, ?>> entry : handlers.entrySet()) {
+    for (final Map.Entry<Class<?>, ResultHandler<?, ?>> entry : handlers.entrySet()) {
       if (entry.getKey().isAssignableFrom(clazz) || clazz.isAssignableFrom(entry.getKey())) {
         return entry.getValue();
       }

@@ -2,11 +2,11 @@ package dev.varion.hermes.pubsub;
 
 import static java.util.Arrays.stream;
 
+import dev.shiza.dew.event.EventBus;
 import dev.shiza.dew.subscription.Subscribe;
 import dev.shiza.dew.subscription.Subscriber;
 import dev.varion.hermes.callback.PacketCallbackFacade;
 import dev.varion.hermes.callback.PacketCallbackSubscriber;
-import dev.varion.hermes.eventbus.event.EventBus;
 import dev.varion.hermes.packet.Packet;
 import dev.varion.hermes.packet.PacketBroker;
 import dev.varion.hermes.packet.codec.PacketCodec;
@@ -88,6 +88,6 @@ final class PacketSubscriberImpl implements PacketSubscriber {
   }
 
   private void attachResultPacketHandler() {
-    eventBus.result(Packet.class, packet -> packetPublisher.publish("callbacks", packet));
+    eventBus.result(Packet.class, (event, packet) -> packetPublisher.publish("callbacks", packet));
   }
 }
