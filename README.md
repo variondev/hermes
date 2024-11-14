@@ -17,7 +17,7 @@ maven("https://repo.varion.dev/snapshots")
 #### Core Components
 
 ```kotlin
-implementation("dev.varion.hermes:hermes-common:1.1.1-SNAPSHOT")
+implementation("dev.varion.hermes:hermes-common:1.1.2-SNAPSHOT")
 ```
 
 #### Codec Support
@@ -25,8 +25,8 @@ implementation("dev.varion.hermes:hermes-common:1.1.1-SNAPSHOT")
 To handle serialization and deserialization, include:
 
 ```kotlin
-implementation("dev.varion.hermes:hermes-codec-jackson:1.1.1-SNAPSHOT")
-implementation("dev.varion.hermes:hermes-codec-msgpack-jackson:1.1.1-SNAPSHOT")
+implementation("dev.varion.hermes:hermes-codec-jackson:1.1.2-SNAPSHOT")
+implementation("dev.varion.hermes:hermes-codec-msgpack-jackson:1.1.2-SNAPSHOT")
 ```
 
 #### Bridge Integrations
@@ -34,8 +34,8 @@ implementation("dev.varion.hermes:hermes-codec-msgpack-jackson:1.1.1-SNAPSHOT")
 For bridge-based communication:
 
 ```kotlin
-implementation("dev.varion.hermes:hermes-bridge-nats:1.1.1-SNAPSHOT")
-implementation("dev.varion.hermes:hermes-bridge-redis:1.1.1-SNAPSHOT")
+implementation("dev.varion.hermes:hermes-bridge-nats:1.1.2-SNAPSHOT")
+implementation("dev.varion.hermes:hermes-bridge-redis:1.1.2-SNAPSHOT")
 ```
 
 [**Examples of Hermes Implementations**](hermes-common/test)
