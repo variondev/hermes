@@ -8,7 +8,7 @@ dependencies {
     compileOnly(project(":hermes-common"))
     implementation(project(":hermes-bridge-redis"))
     compileOnly("dev.shiza:dew:1.2.2")
-    compileOnly("io.lettuce:lettuce-core:6.4.0.RELEASE")
+    compileOnly("io.lettuce:lettuce-core:6.5.0.RELEASE")
 }
 
 hermesPublish {
