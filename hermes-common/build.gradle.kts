@@ -1,6 +1,5 @@
 plugins {
     `hermes-java`
-    `hermes-shadow`
     `hermes-publish`
     `hermes-repositories`
     `hermes-unit`

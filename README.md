@@ -25,8 +25,12 @@ implementation("dev.varion.hermes:hermes-common:1.1.2")
 To handle serialization and deserialization, include:
 
 ```kotlin
+// jackson
 implementation("dev.varion.hermes:hermes-codec-jackson:1.1.2")
+implementation("com.fasterxml.jackson.core:jackson-databind:2.18.1")
+// msgpack + jackson
 implementation("dev.varion.hermes:hermes-codec-msgpack-jackson:1.1.2")
+implementation("org.msgpack:jackson-dataformat-msgpack:0.9.8")
 ```
 
 #### Bridge Integrations
@@ -34,8 +38,12 @@ implementation("dev.varion.hermes:hermes-codec-msgpack-jackson:1.1.2")
 For bridge-based communication:
 
 ```kotlin
+// nats
 implementation("dev.varion.hermes:hermes-bridge-nats:1.1.2")
+implementation("io.nats:jnats:2.20.2")
+// redis
 implementation("dev.varion.hermes:hermes-bridge-redis:1.1.2")
+implementation("io.lettuce:lettuce-core:6.4.0.RELEASE")
 ```
 
 [**Examples of Hermes Implementations**](hermes-common/test)

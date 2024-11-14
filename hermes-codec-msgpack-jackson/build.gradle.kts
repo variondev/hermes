@@ -6,7 +6,7 @@ plugins {
 
 dependencies {
     api(project(":hermes-codec-jackson"))
-    api("org.msgpack:jackson-dataformat-msgpack:0.9.8")
+    compileOnlyApi("org.msgpack:jackson-dataformat-msgpack:0.9.8")
 }
 
 hermesPublish {

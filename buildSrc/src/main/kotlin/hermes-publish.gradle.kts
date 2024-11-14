@@ -1,6 +1,7 @@
 plugins {
     `java-library`
     `maven-publish`
+    id("com.gradleup.shadow")
 }
 
 group = "dev.varion.hermes"
@@ -50,7 +51,7 @@ afterEvaluate {
         publications {
             create<MavenPublication>("maven") {
                 artifactId = extension.artifactId
-                from(project.components["java"])
+                from(project.components["shadow"])
             }
         }
     }
