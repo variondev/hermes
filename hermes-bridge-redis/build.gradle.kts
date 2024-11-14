@@ -5,8 +5,9 @@ plugins {
 }
 
 dependencies {
-    compileOnlyApi(project(":hermes-common"))
-    compileOnlyApi("io.lettuce:lettuce-core:6.4.0.RELEASE")
+    compileOnly(project(":hermes-common"))
+    compileOnly("dev.shiza:dew:1.2.2-SNAPSHOT")
+    compileOnly("io.lettuce:lettuce-core:6.4.0.RELEASE")
 }
 
 hermesPublish {

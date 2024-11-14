@@ -5,8 +5,9 @@ plugins {
 }
 
 dependencies {
-    compileOnlyApi(project(":hermes-common"))
-    compileOnlyApi("com.fasterxml.jackson.core:jackson-databind:2.18.1")
+    compileOnly(project(":hermes-common"))
+    compileOnly("dev.shiza:dew:1.2.2-SNAPSHOT")
+    compileOnly("com.fasterxml.jackson.core:jackson-databind:2.18.1")
 }
 
 hermesPublish {

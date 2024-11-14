@@ -5,8 +5,9 @@ plugins {
 }
 
 dependencies {
-    compileOnlyApi(project(":hermes-common"))
-    compileOnlyApi("io.nats:jnats:2.20.2")
+    compileOnly(project(":hermes-common"))
+    compileOnly("dev.shiza:dew:1.2.2-SNAPSHOT")
+    compileOnly("io.nats:jnats:2.20.2")
 }
 
 hermesPublish {
