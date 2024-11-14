@@ -49,7 +49,7 @@ public final class MasterSlaveServerTests {
   public static final class PongListener implements Subscriber {
 
     @Subscribe
-    public Packet receive(final MasterSlaveRequestPacket request) {
+    public MasterSlaveResponsePacket receive(final MasterSlaveRequestPacket request) {
       // method can be a void, no need to return any packets,
       // if response cannot be sent it's also
       // fine you can return null
