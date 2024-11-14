@@ -9,7 +9,7 @@
 To add Hermes to your project, include the following Maven repository:
 
 ```kotlin
-maven("https://repo.varion.dev/snapshots")
+maven("https://repo.varion.dev/releases")
 ```
 
 ### **Add Dependencies**
