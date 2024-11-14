@@ -1,12 +1,13 @@
 plugins {
     `hermes-java`
+    `hermes-shadow`
     `hermes-publish`
     `hermes-repositories`
     `hermes-unit`
 }
 
 dependencies {
-    api("dev.shiza:dew:1.1.2")
+    api("dev.shiza:dew:1.2.2-SNAPSHOT")
     api("com.spotify:completable-futures:0.3.6")
     testImplementation(project(":hermes-codec-msgpack-jackson"))
     testImplementation(project(":hermes-bridge-redis"))

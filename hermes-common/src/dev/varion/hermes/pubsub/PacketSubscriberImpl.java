@@ -88,6 +88,6 @@ final class PacketSubscriberImpl implements PacketSubscriber {
   }
 
   private void attachResultPacketHandler() {
-    eventBus.result(Packet.class, packet -> packetPublisher.publish("callbacks", packet));
+    eventBus.result(Packet.class, (event, packet) -> packetPublisher.publish("callbacks", packet));
   }
 }

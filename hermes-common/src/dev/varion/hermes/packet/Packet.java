@@ -26,9 +26,10 @@ public abstract class Packet implements Event {
     this.uniqueId = uniqueId;
   }
 
-  public Packet dispatchTo(final UUID uniqueId) {
+  public <T extends Packet> T dispatchTo(final UUID uniqueId) {
     this.uniqueId = uniqueId;
-    return this;
+    //noinspection unchecked
+    return (T) this;
   }
 
   @Override

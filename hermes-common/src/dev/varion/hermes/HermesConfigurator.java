@@ -1,6 +1,8 @@
 package dev.varion.hermes;
 
 import dev.shiza.dew.event.EventBus;
+import dev.shiza.dew.event.EventBusFactory;
+import dev.shiza.dew.subscription.SubscriptionFacadeFactory;
 import dev.varion.hermes.callback.PacketCallbackConfig;
 import dev.varion.hermes.callback.PacketCallbackFacade;
 import dev.varion.hermes.callback.requester.PacketCallbackRequester;
@@ -14,6 +16,7 @@ import dev.varion.hermes.packet.codec.PacketCodec;
 import dev.varion.hermes.packet.codec.PacketCodecConfig;
 import dev.varion.hermes.pubsub.PacketPublisher;
 import dev.varion.hermes.pubsub.PacketSubscriber;
+import java.util.HashMap;
 import java.util.function.Consumer;
 
 public final class HermesConfigurator {
@@ -42,18 +45,8 @@ public final class HermesConfigurator {
     }
 
     final KeyValueStorage keyValueStorage = configurator.keyValue().get();
-    final boolean shouldInitializeDistributedLocks =
-        configurator.distributedLock().shouldInitializeDistributedLocks();
-    DistributedLocks distributedLocks = configurator.distributedLock().get();
-    if (keyValueStorage == null && (shouldInitializeDistributedLocks || distributedLocks != null)) {
-      throw new HermesException(
-          "Key value storage is required when distributed locks are provided.");
-    }
-
-    if (shouldInitializeDistributedLocks && distributedLocks == null) {
-      distributedLocks = DistributedLocks.create(keyValueStorage);
-    }
-
+    final DistributedLocks distributedLocks =
+        configureDistributedLocks(configurator, keyValueStorage);
     final PacketPublisher packetPublisher = PacketPublisher.create(packetBroker, packetCodec);
     final PacketCallbackFacade packetCallbackFacade = PacketCallbackFacade.create();
     return new HermesImpl(
@@ -72,6 +65,22 @@ public final class HermesConfigurator {
             packetPublisher,
             packetCallbackFacade,
             packetCodec));
+  }
+
+  private static DistributedLocks configureDistributedLocks(
+      final HermesConfigurator configurator, final KeyValueStorage keyValueStorage) {
+    final boolean shouldInitializeDistributedLocks =
+        configurator.distributedLock().shouldInitializeDistributedLocks();
+    DistributedLocks distributedLocks = configurator.distributedLock().get();
+    if (keyValueStorage == null && (shouldInitializeDistributedLocks || distributedLocks != null)) {
+      throw new HermesException(
+          "Key value storage is required when distributed locks are provided.");
+    }
+
+    if (shouldInitializeDistributedLocks && distributedLocks == null) {
+      distributedLocks = DistributedLocks.create(keyValueStorage);
+    }
+    return distributedLocks;
   }
 
   public EventBusConfig eventBus() {
@@ -133,7 +142,10 @@ public final class HermesConfigurator {
     private final EventBus eventBus;
 
     public EventBusConfig() {
-      eventBus = EventBus.create().publisher(Runnable::run);
+      eventBus =
+          EventBusFactory.create(
+                  SubscriptionFacadeFactory.create(), new HermesResultHandler(new HashMap<>()))
+              .publisher(Runnable::run);
     }
 
     public EventBus get() {

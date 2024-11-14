@@ -8,6 +8,7 @@ repositories {
 
 dependencies {
     implementation(kotlin("script-runtime"))
+    implementation("com.gradleup.shadow:shadow-gradle-plugin:8.3.3")
 }
 
 sourceSets {
