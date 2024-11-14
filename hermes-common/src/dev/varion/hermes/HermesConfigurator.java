@@ -1,11 +1,15 @@
 package dev.varion.hermes;
 
-import dev.shiza.dew.event.EventBus;
+import dev.shiza.dew.subscription.SubscriptionFacade;
 import dev.varion.hermes.callback.PacketCallbackConfig;
 import dev.varion.hermes.callback.PacketCallbackFacade;
 import dev.varion.hermes.callback.requester.PacketCallbackRequester;
 import dev.varion.hermes.distributed.DistributedLockConfig;
 import dev.varion.hermes.distributed.DistributedLocks;
+import dev.varion.hermes.eventbus.event.EventBus;
+import dev.varion.hermes.eventbus.event.EventBusFactory;
+import dev.varion.hermes.eventbus.result.ResultHandlerFacade;
+import dev.varion.hermes.eventbus.result.ResultHandlerFacadeFactory;
 import dev.varion.hermes.keyvalue.KeyValueConfig;
 import dev.varion.hermes.keyvalue.KeyValueStorage;
 import dev.varion.hermes.packet.PacketBroker;
@@ -133,7 +137,7 @@ public final class HermesConfigurator {
     private final EventBus eventBus;
 
     public EventBusConfig() {
-      eventBus = EventBus.create().publisher(Runnable::run);
+      eventBus = EventBusFactory.create(SubscriptionFacade.create(), ResultHandlerFacadeFactory.create()).publisher(Runnable::run);
     }
 
     public EventBus get() {
