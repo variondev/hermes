@@ -7,7 +7,7 @@ plugins {
 dependencies {
     compileOnly(project(":hermes-common"))
     implementation(project(":hermes-codec-jackson"))
-    compileOnly("dev.shiza:dew:1.2.2-SNAPSHOT")
+    compileOnly("dev.shiza:dew:1.2.2")
     compileOnly("org.msgpack:jackson-dataformat-msgpack:0.9.8")
 }
 

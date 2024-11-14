@@ -4,5 +4,4 @@ plugins {
 
 repositories {
     mavenCentral()
-    maven("https://repo.shiza.dev/snapshots")
-}
+    maven("https://repo.shiza.dev/releases")}

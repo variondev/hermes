@@ -6,7 +6,7 @@ plugins {
 }
 
 dependencies {
-    implementation("dev.shiza:dew:1.2.2-SNAPSHOT")
+    implementation("dev.shiza:dew:1.2.2")
     implementation("com.spotify:completable-futures:0.3.6")
     testImplementation(project(":hermes-codec-msgpack-jackson"))
     testImplementation(project(":hermes-bridge-redis"))
