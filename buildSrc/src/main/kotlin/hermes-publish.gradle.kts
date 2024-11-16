@@ -51,10 +51,7 @@ afterEvaluate {
         publications {
             create<MavenPublication>("maven") {
                 artifactId = extension.artifactId
-                from(components["java"])
-                artifact(tasks.named("shadowJar").get()) {
-                    classifier = "shadow"
-                }
+                from(components["shadow"])
             }
         }
     }
