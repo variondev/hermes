@@ -42,27 +42,32 @@ public final class HermesConfigurator {
       throw new HermesException("Packet codec is missing while building Hermes.");
     }
 
-    final KeyValueStorage keyValueStorage = configurator.keyValue().get();
-    final DistributedLocks distributedLocks =
-        configureDistributedLocks(configurator, keyValueStorage);
-    final PacketPublisher packetPublisher = PacketPublisher.create(packetBroker, packetCodec);
-    final PacketCallbackFacade packetCallbackFacade = PacketCallbackFacade.create();
-    return new HermesImpl(
-        packetBroker,
-        keyValueStorage,
-        distributedLocks,
-        packetPublisher,
+    final PacketCallbackConfig callbackConfig = configurator.packetCallback();
+    final PacketCallbackFacade packetCallbackFacade = callbackConfig.packetCallbackFacade();
+    final PacketCallbackRequester packetCallbackRequester =
         PacketCallbackRequester.create(
             packetBroker,
             packetCodec,
             packetCallbackFacade,
-            configurator.packetCallback().requestCleanupInterval()),
+            callbackConfig.requestCleanupInterval());
+    final PacketPublisher packetPublisher = PacketPublisher.create(packetBroker, packetCodec);
+    final PacketSubscriber packetSubscriber =
         PacketSubscriber.create(
             configurator.eventBus().get(),
             packetBroker,
             packetPublisher,
             packetCallbackFacade,
-            packetCodec));
+            packetCodec);
+    final KeyValueStorage keyValueStorage = configurator.keyValue().get();
+    final DistributedLocks distributedLocks =
+        configureDistributedLocks(configurator, keyValueStorage);
+    return new HermesImpl(
+        packetBroker,
+        keyValueStorage,
+        distributedLocks,
+        packetPublisher,
+        packetCallbackRequester,
+        packetSubscriber);
   }
 
   private static DistributedLocks configureDistributedLocks(
@@ -137,7 +142,7 @@ public final class HermesConfigurator {
 
   public static final class EventBusConfig {
 
-    private final EventBus eventBus;
+    private EventBus eventBus;
 
     public EventBusConfig() {
       eventBus = EventBusFactory.create().publisher(Runnable::run);
@@ -145,6 +150,10 @@ public final class HermesConfigurator {
 
     public EventBus get() {
       return eventBus;
+    }
+
+    public void using(final EventBus eventBus) {
+      this.eventBus = eventBus;
     }
 
     public void using(final Consumer<EventBus> mutator) {

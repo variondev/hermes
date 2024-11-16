@@ -6,9 +6,11 @@ import java.time.Duration;
 
 public final class PacketCallbackConfig {
 
+  private PacketCallbackFacade packetCallbackFacade;
   private Duration requestCleanupInterval;
 
   public PacketCallbackConfig() {
+    packetCallbackFacade = PacketCallbackFacade.create();
     requestCleanupInterval = ofSeconds(10L);
   }
 
@@ -18,5 +20,13 @@ public final class PacketCallbackConfig {
 
   public void requestCleanupInterval(final Duration requestCleanupInterval) {
     this.requestCleanupInterval = requestCleanupInterval;
+  }
+
+  public PacketCallbackFacade packetCallbackFacade() {
+    return packetCallbackFacade;
+  }
+
+  public void packetCallbackFacade(final PacketCallbackFacade packetCallbackFacade) {
+    this.packetCallbackFacade = packetCallbackFacade;
   }
 }

@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "dev.varion.hermes"
-version = "1.2"
+version = "1.2.2"
 
 java {
     withSourcesJar()
@@ -51,7 +51,10 @@ afterEvaluate {
         publications {
             create<MavenPublication>("maven") {
                 artifactId = extension.artifactId
-                from(project.components["shadow"])
+                from(components["java"])
+                artifact(tasks.named("shadowJar").get()) {
+                    classifier = "shadow"
+                }
             }
         }
     }
