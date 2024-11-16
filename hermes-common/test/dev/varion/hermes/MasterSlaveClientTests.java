@@ -2,6 +2,8 @@ package dev.varion.hermes;
 
 import static dev.varion.hermes.packet.codec.MsgpackJacksonObjectMapperFactory.getMsgpackJacksonObjectMapper;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.varion.hermes.packet.RedisPacketBroker;
 import dev.varion.hermes.packet.codec.JacksonPacketCodecFactory;
 import io.lettuce.core.RedisClient;
@@ -24,13 +26,27 @@ public final class MasterSlaveClientTests {
                         config ->
                             config.using(
                                 JacksonPacketCodecFactory.getJacksonPacketCodec(
-                                    getMsgpackJacksonObjectMapper()))))) {
+                                    ))))) {
+      System.out.println("starting");
       hermes
           .<MasterSlaveResponsePacket>request("tests", new MasterSlaveRequestPacket("Ping!"))
+          .exceptionally(throwable -> {
+            throwable.printStackTrace();
+            return null;
+          })
           .thenAccept(
-              packet ->
-                  System.out.printf(
-                      "Received: %s -> %s%n", packet.getUniqueId(), packet.getContent()))
+              packet -> {
+                System.out.println("handling response");
+                try {
+                  System.out.printf("Received: %s", new ObjectMapper().writeValueAsString(packet));
+                } catch (final JsonProcessingException e) {
+                  throw new RuntimeException(e);
+                }
+              })
+          .exceptionally(throwable -> {
+            throwable.printStackTrace();
+            return null;
+          })
           .join();
 
       hermes.publish("tests", new BroadcastPacket("Hello from client!"));
