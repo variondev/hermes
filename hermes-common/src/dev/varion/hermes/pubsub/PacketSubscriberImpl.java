@@ -75,6 +75,10 @@ final class PacketSubscriberImpl implements PacketSubscriber {
         identity,
         (channelName, payload) -> {
           final Packet packet = packetCodec.deserialize(payload);
+          if (packet == null) {
+            return;
+          }
+
           final boolean whetherListensForPacket = packetTypes.contains(packet.getClass());
           if (whetherListensForPacket) {
             eventBus.publish(packet, identity);

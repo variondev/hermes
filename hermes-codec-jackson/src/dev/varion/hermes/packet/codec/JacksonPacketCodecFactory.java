@@ -12,11 +12,12 @@ public final class JacksonPacketCodecFactory {
 
   private JacksonPacketCodecFactory() {}
 
-  public static PacketCodec getJacksonPacketCodec(final ObjectMapper objectMapper) {
-    return new JacksonPacketCodec(objectMapper);
+  public static PacketCodec getJacksonPacketCodec(
+      final ObjectMapper objectMapper, final boolean throwOnUnknownType) {
+    return new JacksonPacketCodec(objectMapper, throwOnUnknownType);
   }
 
-  public static PacketCodec getJacksonPacketCodec() {
+  public static PacketCodec getJacksonPacketCodec(final boolean throwOnUnknownType) {
     final JsonMapper mapper =
         JsonMapper.builder()
             .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
@@ -29,6 +30,10 @@ public final class JacksonPacketCodecFactory {
             .withGetterVisibility(JsonAutoDetect.Visibility.NONE)
             .withSetterVisibility(JsonAutoDetect.Visibility.NONE)
             .withCreatorVisibility(JsonAutoDetect.Visibility.NONE));
-    return getJacksonPacketCodec(mapper);
+    return getJacksonPacketCodec(mapper, throwOnUnknownType);
+  }
+
+  public static PacketCodec getJacksonPacketCodec() {
+    return getJacksonPacketCodec(true);
   }
 }

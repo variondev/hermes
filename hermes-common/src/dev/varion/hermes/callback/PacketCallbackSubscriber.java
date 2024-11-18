@@ -25,6 +25,10 @@ public final class PacketCallbackSubscriber implements HermesListener {
   @Override
   public void receive(final String channelName, final byte[] payload) {
     final Packet packet = packetCodec.deserialize(payload);
+    if (packet == null) {
+      return;
+    }
+
     final UUID uniqueId = packet.getUniqueId();
     packetCallbackFacade
         .findByUniqueId(uniqueId)

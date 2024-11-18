@@ -39,7 +39,8 @@ public final class DistributedLockingTests {
                     .packetBroker(config -> config.using(NatsPacketBroker.create(connection)))
                     .packetCodec(
                         config ->
-                            config.using(getJacksonPacketCodec(getMsgpackJacksonObjectMapper())))
+                            config.using(
+                                getJacksonPacketCodec(getMsgpackJacksonObjectMapper(), true)))
                     .keyValue(
                         config -> {
                           try {
