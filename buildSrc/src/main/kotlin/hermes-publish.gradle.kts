@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "dev.varion.hermes"
-version = "1.2.2"
+version = "1.2.3"
 
 java {
     withSourcesJar()
