@@ -7,7 +7,7 @@ plugins {
 dependencies {
     compileOnly(project(":hermes-common"))
     compileOnly("dev.shiza:dew:1.2.2")
-    compileOnly("io.nats:jnats:2.20.2")
+    compileOnly("io.nats:jnats:2.20.5")
 }
 
 hermesPublish {
